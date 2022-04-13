@@ -1,0 +1,37 @@
+import { DashboardLayout } from "src/components/dashboard-layout";
+import Head from "next/head";
+import { Box, Container, Grid, Typography } from "@mui/material";
+import { AccountProfile } from "src/components/account/account-profile";
+import { AccountProfileDetails } from "src/components/account/account-profile-details";
+
+const Perfil = () => {
+  return (
+    <>
+      <Head>
+        <title>Perfil | CMI</title>
+      </Head>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Typography sx={{ mb: 3 }} variant="h4">
+            Información Personal
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid item lg={12} md={6} xs={12}>
+              <AccountProfileDetails />
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+    </>
+  );
+};
+
+Perfil.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+
+export default Perfil;
