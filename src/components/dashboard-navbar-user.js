@@ -13,7 +13,7 @@ const handleLogout = () => {
   console.log("SALIR");
 };
 
-export const DashboardNavbar = (props) => {
+export const DashboardNavbarUser = (props) => {
   const { onSidebarOpen, ...other } = props;
 
   return (
@@ -52,6 +52,6 @@ export const DashboardNavbar = (props) => {
   );
 };
 
-DashboardNavbar.propTypes = {
+DashboardNavbarUser.propTypes = {
   onSidebarOpen: PropTypes.func,
 };

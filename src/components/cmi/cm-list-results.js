@@ -35,6 +35,7 @@ import BatchPredictionRoundedIcon from "@mui/icons-material/BatchPredictionRound
 import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import apis from "src/utils/bookApis";
 import SummarizeRoundedIcon from "@mui/icons-material/SummarizeRounded";
+import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import FilterNoneRoundedIcon from "@mui/icons-material/FilterNoneRounded";
 import CloudDownloadRoundedIcon from "@mui/icons-material/CloudDownloadRounded";
@@ -42,7 +43,7 @@ import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 
-const CmiListResults = ({ actions, updateView, objetives }) => {
+const CmiListResultsUser = ({ actions, updateView, objetives }) => {
   const [selectedActionIds, setSelectedActionIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -66,8 +67,10 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
     perioricidadReporte: "",
   });
   const [meta, setMeta] = useState({
-    anio: "",
-    valor: "",
+    anio: "2022",
+    valor: "25",
+    avance: "",
+    observacion: "",
   });
   const [open, setOpen] = useState(false);
   const [openEvidencia, setOpenEvidencia] = useState(false);
@@ -358,9 +361,9 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                         <IconButton color="default" onClick={() => handleActive({ ...accion })}>
                           <LoupeRoundedIcon></LoupeRoundedIcon>
                         </IconButton>
-                        <IconButton color="default" onClick={() => handleList({ ...accion })}>
+                        {/* <IconButton color="default" onClick={() => handleList({ ...accion })}>
                           <SummarizeRoundedIcon></SummarizeRoundedIcon>
-                        </IconButton>
+                        </IconButton> */}
                         <IconButton color="default" onClick={() => handleEvidencia({ ...accion })}>
                           <FilterNoneRoundedIcon></FilterNoneRoundedIcon>
                         </IconButton>
@@ -418,6 +421,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                   required
                   name="anio"
                   margin="normal"
+                  disabled
                   id="outlined-basic"
                   label="Año"
                   type="number"
@@ -426,8 +430,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                   value={meta.anio}
                 />
               </Grid>
-              <Grid item md={1} xs={12}></Grid>
-              <Grid item md={3} xs={12}>
+              <Grid item md={3} xs={12} sx={{ ml: 2 }}>
                 <TextField
                   fullWidth
                   required
@@ -436,22 +439,35 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                   id="outlined-basic"
                   label="Porcentaje o Nro Acciones Esperado"
                   type="number"
+                  disabled
                   autoComplete="off"
                   onChange={handleChange}
                   value={meta.valor}
                 />
               </Grid>
-              <Grid item md={1} xs={12}></Grid>
-              <Grid item md={5} xs={12}>
-                <RadioGroup
-                  row
-                  aria-labelledby="demo-form-control-label-placement"
-                  name="position"
-                  defaultValue="numero"
-                >
-                  <FormControlLabel value="numero" control={<Radio />} label="Nro. Acciones" />
-                  <FormControlLabel value="porcentaje" control={<Radio />} label="Porcentaje" />
-                </RadioGroup>
+              <Grid item md={3} xs={12} sx={{ ml: 2 }}>
+                <TextField
+                  fullWidth
+                  required
+                  name="avance"
+                  margin="normal"
+                  id="outlined-basic"
+                  label="Porcentaje o Nro Acciones Realizado"
+                  type="number"
+                  autoComplete="off"
+                  onChange={handleChange}
+                  value={meta.avance}
+                />
+              </Grid>
+              <Grid item md={2} xs={12} sx={{ ml: 2 }}>
+                <IconButton color="default" variant="contained" component="label">
+                  <CloudUploadRoundedIcon></CloudUploadRoundedIcon>
+                  <input type="file" hidden />
+                  <p>Evidencia</p>
+                </IconButton>
+                {/* <Button variant="contained" component="label">
+                  Subir Evidencia
+                </Button> */}
               </Grid>
               <Grid container alignContent="center" sx={{ mt: 1 }} justify="flex-end">
                 <Grid item md={12} xs={12}>
@@ -669,4 +685,4 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
   );
 };
 
-export default CmiListResults;
+export default CmiListResultsUser;
