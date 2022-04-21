@@ -28,4 +28,12 @@ export default {
     edit_id: "/user/",
     delete_id: "/user/",
   },
+  meta: {
+    post_add: "/metas",
+    get_all_indicador: "/metas/byIndicador/",
+    delete_id: "/metas/",
+  },
+  indicador: {
+    patch_observacion: "/indicador/",
+  },
 };

@@ -126,7 +126,7 @@ const Usuario = () => {
       .get(query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort)
       .then((result) => {
         if (result.status === 200) {
-          setUser(result.data);
+          setUser(result.data.content);
           setUpdate(2);
         }
       })

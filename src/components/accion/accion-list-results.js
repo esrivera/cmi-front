@@ -30,6 +30,7 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import BatchPredictionRoundedIcon from "@mui/icons-material/BatchPredictionRounded";
 import apis from "src/utils/bookApis";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import PowerSettingsNewRoundedIcon from "@mui/icons-material/PowerSettingsNewRounded";
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 
@@ -240,7 +241,7 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
                     <TableCell>Descripción</TableCell>
                     <TableCell>Periodicidad</TableCell>
                     <TableCell>Responsable</TableCell>
-                    <TableCell>Desactivar</TableCell>
+                    <TableCell>Estado</TableCell>
                     <TableCell>Opción</TableCell>
                   </TableRow>
                 </TableHead>
@@ -268,7 +269,8 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
                       <TableCell>{accion.institucion.siglas}</TableCell>
                       <TableCell>
                         <IconButton color="default" onClick={() => handleActive()}>
-                          <BatchPredictionRoundedIcon></BatchPredictionRoundedIcon>
+                          <PowerSettingsNewRoundedIcon></PowerSettingsNewRoundedIcon>
+                          <p>Activar</p>
                         </IconButton>
                       </TableCell>
                       <TableCell>

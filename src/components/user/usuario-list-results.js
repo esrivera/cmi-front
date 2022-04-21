@@ -153,7 +153,7 @@ const UserListResults = ({ users, institutions, updateView }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {users?.slice(0, limit).map((user) => (
+                  {users.slice(0, limit).map((user) => (
                     <TableRow
                       hover
                       key={user.id}
