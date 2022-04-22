@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Card,
   CardContent,
   TextField,
@@ -8,19 +7,12 @@ import {
   SvgIcon,
   Typography,
   Grid,
-  DialogContent,
-  DialogTitle,
-  Dialog,
-  Divider,
   FormControl,
   MenuItem,
   Select,
   InputLabel,
 } from "@mui/material";
 import React, { useState } from "react";
-import { clientPublic } from "src/api/axios";
-import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
-import apis from "src/utils/bookApis";
 import { Search as SearchIcon } from "../../icons/search";
 
 const CmiListToolbar = ({
@@ -32,45 +24,8 @@ const CmiListToolbar = ({
   idInstitucion,
   setIdInstitucion,
 }) => {
-  const [errors, setErrors] = useState({});
   const [objetiveId, setObjetiveId] = useState([]);
   const [institucionId, setInstitucionId] = useState([]);
-  const [accion, setAccion] = useState({
-    descDenominador: "",
-    descNumerador: "",
-    descripcion: "",
-    descripcionResultado: "",
-    ecuacion: "",
-    idInstitucion: 0,
-    idObjetivoEstrategico: 0,
-    identificador: "",
-    nombreIndicador: "",
-    perioricidadReporte: "",
-  });
-
-  const handleSave = () => {
-    clientPublic
-      .post(apis.accion.post_add, accion)
-      .then((res) => {
-        if (res.status === 200) {
-          msmSwalExito("Acción estratégica registrada satisfactoriamente");
-        }
-      })
-      .catch((exception) => {
-        if (exception.response) {
-          if (exception.response.status === 400) {
-            msmSwalError("No se pudo registrar la acción estratégica");
-          }
-        } else {
-          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
-        }
-      });
-    updateView();
-  };
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
   const handleChangeSelect = (event) => {
     setObjetiveId(event.target.value);
@@ -147,8 +102,8 @@ const CmiListToolbar = ({
                   <FormControl sx={{ width: 300 }}>
                     <InputLabel id="demo-simple-select-autowidth-label">Institución</InputLabel>
                     <Select
-                      value={objetiveId}
-                      onChange={handleChangeSelect}
+                      value={institucionId}
+                      onChange={changeSelectInstitution}
                       id="demo-simple-select-autowidth"
                       labelId="demo-simple-select-autowidth-label"
                       label="Institución"

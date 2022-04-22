@@ -56,6 +56,7 @@ export const msmSwalInformacion = (titulo, mensaje) => {
     title: titulo,
     text: mensaje,
     icon: "info",
+    showConfirmButton: true,
     confirmButtonText: "Aceptar ",
     showClass: {
       popup: "animate__animated animate__fadeInDown",
@@ -65,29 +66,18 @@ export const msmSwalInformacion = (titulo, mensaje) => {
     },
   });
 };
-export const msmSwalExito = (titulo, mensaje,
+export const msmSwalExito = (
+  titulo,
+  mensaje,
   CancelButton = { show: false, text: "", style: "btn btn-outline-primary ml-2" },
   confirmButton = { show: true, text: "Aceptar", style: "btn btn-primary" }
 ) => {
   return Swal.fire({
+    icon: "success",
     title: titulo,
     text: mensaje,
-    icon: "success",
-    customClass: {
-      confirmButton: (typeof confirmButton.style === "string") ? confirmButton.style : 'btn btn-primary',
-      cancelButton: (typeof CancelButton.style === "string") ? CancelButton.style : 'btn btn-outline-primary ml-2'
-    },
-    confirmButtonText: (typeof confirmButton.text === "string") ? confirmButton.text : "Aceptar ",
-    showConfirmButton: (typeof confirmButton.show === "boolean") ? confirmButton.show : true,
-    showCancelButton: (typeof CancelButton.show === "boolean") ? CancelButton.show : false,
-    cancelButtonText: (typeof CancelButton.text === "string") ? CancelButton.text : "",
-    buttonsStyling: false,
-    showClass: {
-      popup: "animate__animated animate__fadeInDown",
-    },
-    hideClass: {
-      popup: "animate__animated animate__fadeOutUp",
-    },
+    showConfirmButton: true,
+    confirmButtonText: "Aceptar",
   });
 };
 
@@ -96,13 +86,8 @@ export const msmSwalError = (titulo, mensaje) => {
     icon: "error",
     title: titulo,
     text: mensaje,
+    showConfirmButton: true,
     confirmButtonText: "Aceptar ",
-    showClass: {
-      popup: "animate__animated animate__fadeInDown",
-    },
-    hideClass: {
-      popup: "animate__animated animate__fadeOutUp",
-    },
   });
 };
 //background-color: rgba(0, 0, 0, 0.5);  arreglar en el menu

@@ -13,7 +13,7 @@ const CMI = () => {
   const [objetive, setObjetive] = useState([]);
   const [action, setAction] = useState([]);
   const [idObjetivo, setIdObjetivo] = useState(90);
-  const [idInstitucion, setIdInstitucion] = useState();
+  const [idInstitucion, setIdInstitucion] = useState(1);
   const [institution, setInstitution] = useState([]);
   const queryInstitution = {
     uri: apis.institution.get_all,
@@ -32,6 +32,16 @@ const CMI = () => {
     elementos: 15,
     sort: "identificador,asc",
   };
+
+  const queryAccion = {
+    uri: apis.accion.get_id_institution + idInstitucion,
+    metodo: "get",
+    body: null,
+    page: 0,
+    elementos: 15,
+    sort: "identificador,asc",
+  };
+
   const queryObjetive = {
     uri: apis.objetive.get_all,
     metodo: "get",
@@ -67,12 +77,11 @@ const CMI = () => {
 
   const RenderData = () => {
     if (update === 0) {
-      if (objetive.length < 1) {
+      if (objetive.length < 1 || institution.length < 1) {
         searchObjetives();
         searchInstitution();
       }
       searchActions();
-      console.log(action);
     }
     switch (update) {
       case 0:
@@ -113,6 +122,7 @@ const CMI = () => {
             <CircularProgress />
           </div>
         );
+      case 4:
     }
   };
 

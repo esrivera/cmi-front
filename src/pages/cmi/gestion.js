@@ -5,15 +5,15 @@ import { clientPublic } from "src/api/axios";
 import apis from "src/utils/bookApis";
 import { useEffect, useState } from "react";
 import { msmSwalError } from "src/theme/theme";
-import CmiListToolbar from "src/components/cmi/accion-list-toolbar";
-import CmiListResults from "src/components/cmi/accion-list-results";
 import CmiListToolbarUser from "src/components/cmi/cmi-list-toolbar";
 import CmiListResultsUser from "src/components/cmi/cm-list-results";
+import { parseJwt } from "src/utils/userAction";
 
 const CMIG = () => {
   const [update, setUpdate] = useState(0);
   const [objetive, setObjetive] = useState([]);
   const [action, setAction] = useState([]);
+  const [instituteId, setInstituteId] = useState(0);
   const [idObjetivo, setIdObjetivo] = useState(90);
   const [idInstitucion, setIdInstitucion] = useState();
   const [institution, setInstitution] = useState([]);
@@ -27,8 +27,9 @@ const CMIG = () => {
   };
 
   const query = {
-    uri: apis.accion.get_id_objetive + idObjetivo,
+    uri: apis.accion.get_id_institution_objetive + instituteId + "/" + idObjetivo,
     metodo: "get",
+    estado: "true",
     body: null,
     page: 0,
     elementos: 15,
@@ -68,6 +69,10 @@ const CMIG = () => {
   }, [idInstitucion, setIdInstitucion]);
 
   const RenderData = () => {
+    const token = localStorage.getItem("token");
+    const id = parseJwt(token).instituteId;
+    setInstituteId(id);
+    console.log(id);
     if (update === 0) {
       if (objetive.length < 1) {
         searchObjetives();
@@ -146,7 +151,9 @@ const CMIG = () => {
   const searchActions = () => {
     setUpdate(3);
     clientPublic
-      .get(query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort)
+      .get(query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort, {
+        params: { estado: true },
+      })
       .then((result) => {
         if (result.status === 200) {
           setAction(result.data.content);

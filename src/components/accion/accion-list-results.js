@@ -40,6 +40,8 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
   const [page, setPage] = useState(0);
   const [idAccionEstrategica, setIdAccionEstrategica] = useState("");
   const [idIndicador, setIdindicador] = useState("");
+  const [estado, setEstado] = useState(false);
+  const [idAccion, setIdAccion] = useState("");
   const [idFormula, setIdFormula] = useState("");
   const [institution, setInstitution] = useState([]);
   const [idObjetivo, setIdObjetivo] = useState([]);
@@ -76,7 +78,6 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
 
   const handleEdit = (data) => {
     setOpen(true);
-    console.log(data);
     setIdInstitucion(data.institucion.idInstitucion);
     setPeriodicidad(data.perioricidadReporte);
     setIdObjetivo(data.objetivoEstrategico.id);
@@ -206,6 +207,28 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
     clearData();
   };
 
+  const handleChangeEstado = () => {
+    clientPublic
+      .patch(apis.accion.patch_estado_id + idAccion, null, {
+        params: { estado: estado },
+      })
+      .then((res) => {
+        if (res.status >= 200 && res.status < 300) {
+          msmSwalExito("Estado de la acción estratégica cambiado satisfactoriamente");
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          if (exception.response.status >= 400 && exception.response.status < 500) {
+            msmSwalError("No se pudo cambiar el estado de la acción estratégica");
+          }
+        } else {
+          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
+        }
+      });
+    updateView();
+  };
+
   const searchInstitution = async () => {
     await clientPublic
       .get(query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort)
@@ -221,13 +244,16 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
       });
   };
 
-  const handleActive = () => {
+  const handleActive = (data) => {
     setOpenActive(true);
+    setEstado(data.estado ? false : true);
+    setIdAccion(data.id);
   };
 
   const handleCloseActive = () => {
     setOpenActive(false);
   };
+
   return (
     <>
       <Card>
@@ -268,9 +294,13 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
                       <TableCell>{accion.perioricidadReporte}</TableCell>
                       <TableCell>{accion.institucion.siglas}</TableCell>
                       <TableCell>
-                        <IconButton color="default" onClick={() => handleActive()}>
+                        <IconButton
+                          style={{ color: accion.estado ? "red" : "green", fontSize: 13 }}
+                          color="default"
+                          onClick={() => handleActive({ ...accion })}
+                        >
                           <PowerSettingsNewRoundedIcon></PowerSettingsNewRoundedIcon>
-                          <p>Activar</p>
+                          <p>{accion.estado ? "Desactivar" : "Activar"}</p>
                         </IconButton>
                       </TableCell>
                       <TableCell>
@@ -522,7 +552,7 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseActive} autoFocus>
+          <Button onClick={handleChangeEstado} autoFocus>
             Aceptar
           </Button>
           <Button onClick={handleCloseActive}>Cancelar</Button>

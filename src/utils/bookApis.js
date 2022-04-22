@@ -16,11 +16,12 @@ export default {
   },
   accion: {
     post_add: "/accionesEstrategicas",
-    get_all: "",
     get_id_objetive: "/accionesEstrategicas/objetivo/",
     get_id_institution: "/accionesEstrategicas/instituciones/",
+    get_id_institution_objetive: "/accionesEstrategicas/byInstitucionyObjetivo/",
     edit_id: "/accionesEstrategicas/",
     delete_id: "/accionesEstrategicas/",
+    patch_estado_id: "/accionesEstrategicas/",
   },
   user: {
     post_add: "/auth/nuevo",

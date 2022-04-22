@@ -1,13 +1,10 @@
 import Head from "next/head";
 import NextLink from "next/link";
 import {
-  Alert,
-  AlertTitle,
   Box,
   Button,
   Container,
   Link,
-  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
@@ -22,8 +19,6 @@ import { msmSwalError } from "src/theme/theme";
 const Login = () => {
   const [user, setUser] = useState({ username: "", password: "" });
   const router = useRouter();
-  const [errorMessage, setErrorMessage] = useState("");
-  const [open, setOpen] = useState(false);
   const handleChange = (event) => {
     setUser({
       ...user,
@@ -45,14 +40,11 @@ const Login = () => {
           } else {
             router.push("/inicio/home");
           }
-          console.log(dataToken);
         }
       })
       .catch((exception) => {
-        // setErrorMessage("No se pudo iniciar sesión credenciales invalidas.");
-        // setOpen(true);
         if (exception.response) {
-          if (exception.response.status === 400) {
+          if (exception.response.status >= 400 || exception.response.status < 500) {
             msmSwalError("No se pudo iniciar sesión credenciales invalidas.");
           }
         } else {
@@ -61,30 +53,8 @@ const Login = () => {
       });
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
-  };
-
   return (
     <>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert
-          sx={{
-            width: "45%",
-            marginLeft: 50,
-            marginBottom: 30,
-          }}
-          onClose={handleClose}
-          severity="error"
-        >
-          <AlertTitle>Error</AlertTitle>
-          {errorMessage} — <strong>reingresar los datos!</strong>
-        </Alert>
-      </Snackbar>
       <Head>
         <title>Inicio de Sesión</title>
       </Head>

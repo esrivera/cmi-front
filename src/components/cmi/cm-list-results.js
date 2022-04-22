@@ -10,16 +10,9 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
-  FormControl,
-  FormControlLabel,
   Grid,
   IconButton,
-  InputLabel,
-  MenuItem,
   Paper,
-  Radio,
-  RadioGroup,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -31,47 +24,34 @@ import {
   Typography,
 } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import BatchPredictionRoundedIcon from "@mui/icons-material/BatchPredictionRounded";
 import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import apis from "src/utils/bookApis";
-import SummarizeRoundedIcon from "@mui/icons-material/SummarizeRounded";
 import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
+import SummarizeRoundedIcon from "@mui/icons-material/SummarizeRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import FilterNoneRoundedIcon from "@mui/icons-material/FilterNoneRounded";
 import CloudDownloadRoundedIcon from "@mui/icons-material/CloudDownloadRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
+import { validationMeta } from "src/utils/validationInputs";
 
 const CmiListResultsUser = ({ actions, updateView, objetives }) => {
   const [selectedActionIds, setSelectedActionIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
-  const [institution, setInstitution] = useState([]);
-  const [idObjetivo, setIdObjetivo] = useState([]);
-  const [idInstitucion, setIdInstitucion] = useState([]);
-  const [periodicidad, setPeriodicidad] = useState([]);
+  const [observacion, setObservacion] = useState("");
+  const [idIndicador, setIdIndicador] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [errors, setErrors] = useState({});
-  const [accion, setAccion] = useState({
-    descDenominador: "",
-    descNumerador: "",
-    observacion: "",
-    descripcion: "",
-    descripcionResultado: "",
-    ecuacion: "",
-    idInstitucion: 0,
-    idObjetivoEstrategico: 0,
-    identificador: "",
-    nombreIndicador: "",
-    perioricidadReporte: "",
-  });
   const [meta, setMeta] = useState({
-    anio: "2022",
-    valor: "25",
-    avance: "",
-    observacion: "",
+    anio: 2022,
+    valor: 12,
+    idIndicador: 0,
+    numeroAcciones: 0,
+    porcentajePlanficadoPorAnio: "",
   });
+  const [metas, setMetas] = useState([]);
   const [open, setOpen] = useState(false);
   const [openEvidencia, setOpenEvidencia] = useState(false);
   const [openList, setOpenList] = useState(false);
@@ -81,12 +61,12 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
   const [openFormula, setOpenFormula] = useState(false);
   const [openDescripcion, setOpenDescripcion] = useState(false);
   const query = {
-    uri: apis.institution.get_all,
+    uri: apis.meta.get_all_indicador,
     metodo: "get",
     body: null,
     page: 0,
     elementos: 15,
-    sort: "nombre,asc",
+    sort: "anioPlanificado,asc",
   };
 
   function createData(name, valor, avance, detalle) {
@@ -107,22 +87,24 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
 
   const handleEdit = (data) => {
     setOpen(true);
-    setAccion(data);
-    console.log(data);
+    setObservacion(data.indicador[0].observaciones);
+    setIdIndicador(data.indicador[0].id);
   };
 
-  const handleEditData = () => {
+  const handleAddObservacion = () => {
     clientPublic
-      .put(apis.accion.edit_id, accion)
+      .patch(apis.indicador.patch_observacion + idIndicador, null, {
+        params: { observacion: observacion },
+      })
       .then((res) => {
-        if (res.status === 200) {
-          msmSwalExito("Acción Estratégica editada satisfactoriamente");
+        if (res.status >= 200 && res.status < 300) {
+          msmSwalExito("Observación agregada satisfactoriamente");
         }
       })
       .catch((exception) => {
         if (exception.response) {
-          if (exception.response.status === 400) {
-            msmSwalError("No se pudo editar la acción estratégica");
+          if (exception.response.status >= 400 && exception.response.status < 500) {
+            msmSwalError("No se pudo agregar la observación");
           }
         } else {
           msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
@@ -131,47 +113,28 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
     updateView();
   };
 
-  const handleChangeInstitucion = (event) => {
-    setIdInstitucion(event.target.value);
-    setAccion({
-      ...accion,
-      idInstitucion: event.target.value,
-    });
-  };
-
-  const handleChangeObjetivo = (event) => {
-    setIdObjetivo(event.target.value);
-    setAccion({
-      ...accion,
-      idObjetivoEstrategico: event.target.value,
-    });
-  };
-
-  const handleChangePeriodo = (event) => {
-    setPeriodicidad(event.target.value);
-    setAccion({
-      ...accion,
-      perioricidadReporte: event.target.value,
-    });
-  };
-
-  const clearData = () => {
-    setAccion({
-      descDenominador: "",
-      descNumerador: "",
-      descripcion: "",
-      observacion: "",
-      descripcionResultado: "",
-      ecuacion: "",
-      idInstitucion: 0,
-      idObjetivoEstrategico: 0,
-      identificador: "",
-      nombreIndicador: "",
-      perioricidadReporte: "",
-    });
-    setIdInstitucion([]);
-    setIdObjetivo([]);
-    setPeriodicidad([]);
+  const handleAddMeta = () => {
+    const newErrors = validationMeta.submitMeta(meta);
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      clientPublic
+        .post(apis.meta.post_add, meta)
+        .then((res) => {
+          if (res.status >= 200 && res.status < 300) {
+            msmSwalExito("Meta agregada satisfactoriamente");
+          }
+        })
+        .catch((exception) => {
+          if (exception.response) {
+            if (exception.response.status >= 400 && exception.response.status < 500) {
+              msmSwalError("No se pudo agregar la meta");
+            }
+          } else {
+            msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
+          }
+        });
+      updateView();
+    }
   };
 
   const handleChange = (event) => {
@@ -182,30 +145,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
   };
 
   const handleChangeObservacion = (event) => {
-    setAccion({
-      ...accion,
-      observacion: event.target.value,
-    });
-  };
-
-  const handleDelete = (id) => {
-    clientPublic
-      .delete(apis.accion.delete_id + id)
-      .then((res) => {
-        if (res.status === 200) {
-          msmSwalExito("Acción Estratégica eliminada satisfactoriamente");
-          updateView();
-        }
-      })
-      .catch((exception) => {
-        if (exception.response) {
-          if (exception.response.status === 400) {
-            msmSwalError("No se pudo eliminar la acción estratégica");
-          }
-        } else {
-          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
-        }
-      });
+    setObservacion(event.target.value);
   };
 
   const handlePageChange = (event, newPage) => {
@@ -214,7 +154,6 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
 
   const handleClose = () => {
     setOpen(false);
-    clearData();
   };
 
   const handleCloseList = () => {
@@ -223,7 +162,6 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
 
   const handleEvidencia = (data) => {
     setOpenEvidencia(true);
-    console.log(data);
   };
 
   const handleCloseEvidencia = () => {
@@ -236,15 +174,32 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
 
   const handleObservacion = (data) => {
     setOpenObservacion(true);
-    console.log(data);
+    setObservacion(data.indicador[0].observaciones);
   };
 
-  const searchInstitution = async () => {
+  const handleActive = (data) => {
+    setOpenActive(true);
+    setErrors({});
+    setMeta({
+      ...meta,
+      idIndicador: data.indicador[0].id,
+      porcentajePlanficadoPorAnio: 0,
+    });
+  };
+
+  const handleList = (data) => {
+    setOpenList(true);
+    searchMetas(data.indicador[0].id);
+  };
+
+  const searchMetas = async (id) => {
     await clientPublic
-      .get(query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort)
+      .get(
+        query.uri + id + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort
+      )
       .then((result) => {
         if (result.status === 200) {
-          setInstitution(result.data.content);
+          setMetas(result.data.content);
         }
       })
       .catch((exception) => {
@@ -254,26 +209,38 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
       });
   };
 
-  const handleActive = (data) => {
-    setOpenActive(true);
-    console.log(data);
-  };
-
-  const handleList = (data) => {
-    setOpenList(true);
-    console.log(data);
-  };
-
   const handleCloseActive = () => {
     setOpenActive(false);
     setMeta({
-      anio: "",
-      valor: "",
+      anioPlanificado: 0,
+      idIndicador: 0,
+      numeroAcciones: 0,
+      porcentajePlanficadoPorAnio: "",
     });
+    setErrors({});
+  };
+
+  const handleDeleteMeta = (data) => {
+    clientPublic
+      .delete(apis.meta.delete_id + data.id)
+      .then((res) => {
+        if (res.status >= 200 && res.status < 300) {
+          msmSwalExito("Meta eliminada satisfactoriamente");
+          updateView();
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          if (exception.response.status >= 400 && exception.response.status < 500) {
+            msmSwalError("No se pudo eliminar la meta");
+          }
+        } else {
+          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
+        }
+      });
   };
 
   const handleFormula = (data) => {
-    console.log(data.indicador[0].formula[0]);
     setFormula(data.indicador[0].formula[0]);
     setOpenFormula(true);
   };
@@ -348,8 +315,12 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
                           <InfoRoundedIcon></InfoRoundedIcon>
                         </IconButton>
                       </TableCell>
-                      {/* <TableCell>{accion.indicador[0].porcentajeIndicador}</TableCell> */}
-                      <TableCell>13</TableCell>
+                      <TableCell>
+                        {accion.indicador[0].porcentajeIndicador != null
+                          ? accion.indicador[0].porcentajeIndicador
+                          : 0}
+                      </TableCell>
+                      {/* <TableCell>13</TableCell> */}
                       <TableCell
                         sx={{
                           backgroundColor: "lightgreen",
@@ -361,15 +332,15 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
                         <IconButton color="default" onClick={() => handleActive({ ...accion })}>
                           <LoupeRoundedIcon></LoupeRoundedIcon>
                         </IconButton>
-                        {/* <IconButton color="default" onClick={() => handleList({ ...accion })}>
+                        <IconButton color="default" onClick={() => handleList({ ...accion })}>
                           <SummarizeRoundedIcon></SummarizeRoundedIcon>
-                        </IconButton> */}
+                        </IconButton>
                         <IconButton color="default" onClick={() => handleEvidencia({ ...accion })}>
                           <FilterNoneRoundedIcon></FilterNoneRoundedIcon>
                         </IconButton>
                       </TableCell>
-                      {/* <TableCell>{accion.porcentaje}</TableCell> */}
-                      <TableCell>12</TableCell>
+                      <TableCell>{accion.porcentaje}</TableCell>
+                      {/* <TableCell>12</TableCell> */}
                       <TableCell>
                         <IconButton color="default" onClick={() => handleEdit({ ...accion })}>
                           <EditRoundedIcon></EditRoundedIcon>
@@ -398,6 +369,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Card>
+      {/* Agregar Metas */}
       <Dialog
         fullWidth
         maxWidth="md"
@@ -407,86 +379,102 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
       >
         <DialogTitle id="max-width-dialog-title">Establecer metas por año</DialogTitle>
         <DialogContent>
-          <form autoComplete="off" onSubmit={handleEditData}>
-            <Grid container direction="row" justify="flex-start" alignItems="center">
+          <Grid container direction="row" justify="flex-start" alignItems="center">
+            <Grid item md={12} xs={12}>
+              <label>
+                Los campos marcados con ( <font color={palette.error.main}> *</font> ) son
+                obligatorios:
+              </label>
+            </Grid>
+            <Grid item md={2} xs={12}>
+              <TextField
+                fullWidth
+                required
+                name="anio"
+                margin="normal"
+                disabled
+                id="outlined-basic"
+                label="Año"
+                type="number"
+                autoComplete="off"
+                onChange={handleChange}
+                value={meta.anio}
+              />
+            </Grid>
+            <Grid item md={3} xs={12} sx={{ ml: 2 }}>
+              <TextField
+                fullWidth
+                required
+                name="valor"
+                margin="normal"
+                id="outlined-basic"
+                label="Porcentaje o Nro Acciones Esperado"
+                type="number"
+                disabled
+                autoComplete="off"
+                onChange={handleChange}
+                value={meta.valor}
+              />
+            </Grid>
+            <Grid item md={3} xs={12} sx={{ ml: 2 }}>
+              <TextField
+                fullWidth
+                required
+                name="avance"
+                margin="normal"
+                id="outlined-basic"
+                label="Porcentaje o Nro Acciones Realizado"
+                type="number"
+                autoComplete="off"
+                onChange={handleChange}
+                value={meta.avance}
+              />
+            </Grid>
+            <Grid item md={3} xs={12} sx={{ ml: 2 }}>
+              <TextField
+                fullWidth
+                required
+                name="descripcion"
+                margin="normal"
+                id="outlined-basic"
+                label="Descripción de la actividad"
+                type="text"
+                multiline
+                autoComplete="off"
+                onChange={handleChange}
+                value={meta.descripcion}
+              />
+            </Grid>
+            <Grid item md={2} xs={12} sx={{ ml: 2 }}>
+              <IconButton color="default" variant="contained" component="label">
+                <CloudUploadRoundedIcon></CloudUploadRoundedIcon>
+                <input type="file" hidden />
+                <p>Evidencia</p>
+              </IconButton>
+            </Grid>
+            <Grid container alignContent="center" sx={{ mt: 1 }} justify="flex-end">
               <Grid item md={12} xs={12}>
-                <label>
-                  Los campos marcados con ( <font color={palette.error.main}> *</font> ) son
-                  obligatorios:
-                </label>
+                <Divider></Divider>
               </Grid>
-              <Grid item md={2} xs={12}>
-                <TextField
-                  fullWidth
-                  required
-                  name="anio"
-                  margin="normal"
-                  disabled
-                  id="outlined-basic"
-                  label="Año"
-                  type="number"
-                  autoComplete="off"
-                  onChange={handleChange}
-                  value={meta.anio}
-                />
-              </Grid>
-              <Grid item md={3} xs={12} sx={{ ml: 2 }}>
-                <TextField
-                  fullWidth
-                  required
-                  name="valor"
-                  margin="normal"
-                  id="outlined-basic"
-                  label="Porcentaje o Nro Acciones Esperado"
-                  type="number"
-                  disabled
-                  autoComplete="off"
-                  onChange={handleChange}
-                  value={meta.valor}
-                />
-              </Grid>
-              <Grid item md={3} xs={12} sx={{ ml: 2 }}>
-                <TextField
-                  fullWidth
-                  required
-                  name="avance"
-                  margin="normal"
-                  id="outlined-basic"
-                  label="Porcentaje o Nro Acciones Realizado"
-                  type="number"
-                  autoComplete="off"
-                  onChange={handleChange}
-                  value={meta.avance}
-                />
-              </Grid>
-              <Grid item md={2} xs={12} sx={{ ml: 2 }}>
-                <IconButton color="default" variant="contained" component="label">
-                  <CloudUploadRoundedIcon></CloudUploadRoundedIcon>
-                  <input type="file" hidden />
-                  <p>Evidencia</p>
-                </IconButton>
-                {/* <Button variant="contained" component="label">
-                  Subir Evidencia
-                </Button> */}
-              </Grid>
-              <Grid container alignContent="center" sx={{ mt: 1 }} justify="flex-end">
-                <Grid item md={12} xs={12}>
-                  <Divider></Divider>
-                </Grid>
-                <Grid sx={{ mt: 1 }}>
-                  <Button variant="contained" color="primary" type="submit" sx={{ mr: 2 }}>
-                    Agregar
-                  </Button>
-                  <Button variant="outlined" color="secondary" onClick={handleCloseActive}>
-                    Cancelar
-                  </Button>
-                </Grid>
+              <Grid sx={{ mt: 1 }}>
+                <Button
+                  variant="contained"
+                  onClick={handleAddMeta}
+                  color="primary"
+                  type="submit"
+                  sx={{ mr: 2 }}
+                >
+                  Agregar
+                </Button>
+                <Button variant="outlined" color="secondary" onClick={handleCloseActive}>
+                  Cancelar
+                </Button>
               </Grid>
             </Grid>
-          </form>
+          </Grid>
         </DialogContent>
       </Dialog>
-
+      {/* Agregar Observaciones */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -508,18 +496,18 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
               autoComplete="off"
               multiline
               onChange={handleChangeObservacion}
-              value={accion.observacion}
+              value={observacion}
             />
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleAddObservacion} autoFocus>
             Agregar
           </Button>
           <Button onClick={handleClose}>Cancelar</Button>
         </DialogActions>
       </Dialog>
-
+      {/* Información de la Formula */}
       <Dialog
         open={openFormula}
         onClose={handleCloseFormula}
@@ -544,7 +532,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
           <Button onClick={handleCloseFormula}>Cerrar</Button>
         </DialogActions>
       </Dialog>
-
+      {/* Información de la Descripción */}
       <Dialog
         open={openDescripcion}
         onClose={handleCloseDescripcion}
@@ -561,7 +549,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
           <Button onClick={handleCloseDescripcion}>Cerrar</Button>
         </DialogActions>
       </Dialog>
-
+      {/* Lista de metas por año */}
       <Dialog
         open={openList}
         onClose={handleCloseList}
@@ -582,17 +570,21 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
+                  {metas.map((row) => (
                     <TableRow
-                      key={row.name}
+                      key={row.id}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.name}
+                        {row.anioPlanificado}
                       </TableCell>
-                      <TableCell align="right">{row.valor}</TableCell>
                       <TableCell align="right">
-                        <IconButton>
+                        {row.numeroAcciones > 0
+                          ? row.numeroAcciones
+                          : row.porcentajePlanficadoPorAnio}
+                      </TableCell>
+                      <TableCell align="right">
+                        <IconButton onClick={() => handleDeleteMeta({ ...row })}>
                           <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
                         </IconButton>
                       </TableCell>
@@ -607,7 +599,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
           <Button onClick={handleCloseList}>Cerrar</Button>
         </DialogActions>
       </Dialog>
-
+      {/* Información de las Observaciones */}
       <Dialog
         open={openObservacion}
         onClose={handleCloseObservacion}
@@ -617,21 +609,14 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
         <DialogTitle id="alert-dialog-title">Observaciones</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <text>
-              1) Se ha elaborado la propuesta del "Proyecto de Modernización del Sistema Integral de
-              Gestión Marítima y Portuaria", en el cuál abarca el SIGMAP y ORCA.
-              <br />
-              2) Se requiere gestionar el presupuesto por parte del Ministerio de Finanzas.
-              <br />
-              3) No cuentan con documentos evidenciables.
-            </text>
+            <text>{observacion != null ? observacion : "No se han registrado observaciones"}</text>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseObservacion}>Cerrar</Button>
         </DialogActions>
       </Dialog>
-
+      {/* Lista de metas por año con evidencia */}
       <Dialog
         open={openEvidencia}
         onClose={handleCloseEvidencia}

@@ -10,16 +10,9 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
-  FormControl,
-  FormControlLabel,
   Grid,
   IconButton,
-  InputLabel,
-  MenuItem,
   Paper,
-  Radio,
-  RadioGroup,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -31,7 +24,6 @@ import {
   Typography,
 } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import BatchPredictionRoundedIcon from "@mui/icons-material/BatchPredictionRounded";
 import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import apis from "src/utils/bookApis";
 import SummarizeRoundedIcon from "@mui/icons-material/SummarizeRounded";
@@ -47,31 +39,14 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
   const [selectedActionIds, setSelectedActionIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
-  const [institution, setInstitution] = useState([]);
-  const [idObjetivo, setIdObjetivo] = useState([]);
-  const [idInstitucion, setIdInstitucion] = useState([]);
-  const [periodicidad, setPeriodicidad] = useState([]);
   const [observacion, setObservacion] = useState("");
   const [idIndicador, setIdIndicador] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [errors, setErrors] = useState({});
-  const [accion, setAccion] = useState({
-    descDenominador: "",
-    descNumerador: "",
-    observacion: "",
-    descripcion: "",
-    descripcionResultado: "",
-    ecuacion: "",
-    idInstitucion: 0,
-    idObjetivoEstrategico: 0,
-    identificador: "",
-    nombreIndicador: "",
-    perioricidadReporte: "",
-  });
   const [meta, setMeta] = useState({
-    anioPlanificado: "",
+    anioPlanificado: 0,
     idIndicador: 0,
-    numeroAcciones: "",
+    numeroAcciones: 0,
     porcentajePlanficadoPorAnio: "",
   });
   const [metas, setMetas] = useState([]);
@@ -80,8 +55,6 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
   const [openList, setOpenList] = useState(false);
   const [openObservacion, setOpenObservacion] = useState(false);
   const [formula, setFormula] = useState({});
-  const [selectCheck, setSelectCheck] = useState("N");
-  const [valor, setValor] = useState();
   const [openActive, setOpenActive] = useState(false);
   const [openFormula, setOpenFormula] = useState(false);
   const [openDescripcion, setOpenDescripcion] = useState(false);
@@ -162,49 +135,6 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
     }
   };
 
-  const handleChangeInstitucion = (event) => {
-    setIdInstitucion(event.target.value);
-    setAccion({
-      ...accion,
-      idInstitucion: event.target.value,
-    });
-  };
-
-  const handleChangeObjetivo = (event) => {
-    setIdObjetivo(event.target.value);
-    setAccion({
-      ...accion,
-      idObjetivoEstrategico: event.target.value,
-    });
-  };
-
-  const handleChangePeriodo = (event) => {
-    setPeriodicidad(event.target.value);
-    setAccion({
-      ...accion,
-      perioricidadReporte: event.target.value,
-    });
-  };
-
-  const clearData = () => {
-    setAccion({
-      descDenominador: "",
-      descNumerador: "",
-      descripcion: "",
-      observacion: "",
-      descripcionResultado: "",
-      ecuacion: "",
-      idInstitucion: 0,
-      idObjetivoEstrategico: 0,
-      identificador: "",
-      nombreIndicador: "",
-      perioricidadReporte: "",
-    });
-    setIdInstitucion([]);
-    setIdObjetivo([]);
-    setPeriodicidad([]);
-  };
-
   const handleChange = (event) => {
     setMeta({
       ...meta,
@@ -212,62 +142,8 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
     });
   };
 
-  const handleChangeRadioSelect = (event) => {
-    setSelectCheck(event.target.value);
-    if (event.target.value === "N") {
-      setMeta({
-        ...meta,
-        numeroAcciones: valor,
-        porcentajePlanficadoPorAnio: 0,
-      });
-    } else {
-      setMeta({
-        ...meta,
-        porcentajePlanficadoPorAnio: valor,
-        numeroAcciones: 0,
-      });
-    }
-  };
-
-  const handleChangeRadio = (event) => {
-    setValor(event.target.value);
-    if (selectCheck === "N") {
-      setMeta({
-        ...meta,
-        numeroAcciones: event.target.value,
-        porcentajePlanficadoPorAnio: 0,
-      });
-    } else {
-      setMeta({
-        ...meta,
-        porcentajePlanficadoPorAnio: event.target.value,
-        numeroAcciones: 0,
-      });
-    }
-  };
-
   const handleChangeObservacion = (event) => {
     setObservacion(event.target.value);
-  };
-
-  const handleDelete = (id) => {
-    clientPublic
-      .delete(apis.accion.delete_id + id)
-      .then((res) => {
-        if (res.status === 200) {
-          msmSwalExito("Acción Estratégica eliminada satisfactoriamente");
-          updateView();
-        }
-      })
-      .catch((exception) => {
-        if (exception.response) {
-          if (exception.response.status === 400) {
-            msmSwalError("No se pudo eliminar la acción estratégica");
-          }
-        } else {
-          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
-        }
-      });
   };
 
   const handlePageChange = (event, newPage) => {
@@ -276,7 +152,6 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
 
   const handleClose = () => {
     setOpen(false);
-    clearData();
   };
 
   const handleCloseList = () => {
@@ -306,6 +181,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
     setMeta({
       ...meta,
       idIndicador: data.indicador[0].id,
+      porcentajePlanficadoPorAnio: 0,
     });
   };
 
@@ -334,9 +210,9 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
   const handleCloseActive = () => {
     setOpenActive(false);
     setMeta({
-      anioPlanificado: "",
+      anioPlanificado: 0,
       idIndicador: 0,
-      numeroAcciones: "",
+      numeroAcciones: 0,
       porcentajePlanficadoPorAnio: "",
     });
     setErrors({});
@@ -437,8 +313,12 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                           <InfoRoundedIcon></InfoRoundedIcon>
                         </IconButton>
                       </TableCell>
-                      {/* <TableCell>{accion.indicador[0].porcentajeIndicador}</TableCell> */}
-                      <TableCell>13</TableCell>
+                      <TableCell>
+                        {accion.indicador[0].porcentajeIndicador != null
+                          ? accion.indicador[0].porcentajeIndicador
+                          : 0}
+                      </TableCell>
+                      {/* <TableCell>13</TableCell> */}
                       <TableCell
                         sx={{
                           backgroundColor: "lightgreen",
@@ -457,8 +337,8 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                           <FilterNoneRoundedIcon></FilterNoneRoundedIcon>
                         </IconButton>
                       </TableCell>
-                      {/* <TableCell>{accion.porcentaje}</TableCell> */}
-                      <TableCell>12</TableCell>
+                      <TableCell>{accion.porcentaje}</TableCell>
+                      {/* <TableCell>12</TableCell> */}
                       <TableCell>
                         <IconButton color="default" onClick={() => handleEdit({ ...accion })}>
                           <EditRoundedIcon></EditRoundedIcon>
@@ -488,14 +368,8 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
         />
       </Card>
       {/* Agregar Metas */}
-      <Dialog
-        fullWidth
-        maxWidth="md"
-        open={openActive}
-        onClose={handleCloseActive}
-        disableEscapeKeyDown
-      >
-        <DialogTitle id="max-width-dialog-title">Establecer metas por año</DialogTitle>
+      <Dialog fullWidth open={openActive} onClose={handleCloseActive} disableEscapeKeyDown>
+        <DialogTitle>Establecer metas por año</DialogTitle>
         <DialogContent>
           <Grid container direction="row" justify="flex-start" alignItems="center">
             <Grid item md={12} xs={12}>
@@ -504,7 +378,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                 obligatorios:
               </label>
             </Grid>
-            <Grid item md={2} xs={12}>
+            <Grid item md={3} xs={8}>
               <TextField
                 fullWidth
                 required
@@ -522,33 +396,20 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                 <p style={{ color: "red", fontSize: 11 }}>{errors.anioPlanificado}</p>
               ) : null}
             </Grid>
-            <Grid item md={1} xs={12}></Grid>
-            <Grid item md={3} xs={12}>
+            <Grid item md={1} xs={8}></Grid>
+            <Grid item md={6} xs={8}>
               <TextField
                 fullWidth
                 required
-                name="valor"
+                name="numeroAcciones"
                 margin="normal"
                 id="outlined-basic"
                 label="Porcentaje o Nro Acciones Esperado"
                 type="number"
                 autoComplete="off"
-                onChange={handleChangeRadio}
-                onBlur={handleChangeRadio}
-                value={valor}
+                onChange={handleChange}
+                value={meta.numeroAcciones}
               />
-            </Grid>
-            <Grid item md={1} xs={12}></Grid>
-            <Grid item md={5} xs={12}>
-              <RadioGroup
-                row
-                aria-labelledby="demo-form-control-label-placement"
-                defaultValue="N"
-                onChange={handleChangeRadioSelect}
-              >
-                <FormControlLabel value="N" control={<Radio />} label="Nro. Acciones" />
-                <FormControlLabel value="P" control={<Radio />} label="Porcentaje" />
-              </RadioGroup>
             </Grid>
             <Grid container alignContent="center" sx={{ mt: 1 }} justify="flex-end">
               <Grid item md={12} xs={12}>
