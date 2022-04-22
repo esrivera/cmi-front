@@ -69,9 +69,9 @@ const CMIG = () => {
   }, [idInstitucion, setIdInstitucion]);
 
   const RenderData = () => {
-    const token = localStorage.getItem("token");
-    const id = parseJwt(token).instituteId;
-    setInstituteId(id);
+    //const token = localStorage.getItem("token");
+    //const id = parseJwt(token).instituteId;
+    setInstituteId(67);
     console.log(id);
     if (update === 0) {
       if (objetive.length < 1) {
