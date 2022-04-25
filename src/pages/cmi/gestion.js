@@ -69,10 +69,10 @@ const CMIG = () => {
   }, [idInstitucion, setIdInstitucion]);
 
   const RenderData = () => {
-    //const token = localStorage.getItem("token");
-    //const id = parseJwt(token).instituteId;
-    setInstituteId(67);
     if (update === 0) {
+      const token = localStorage.getItem("token");
+      const id = parseJwt(token).instituteId;
+      setInstituteId(id);
       if (objetive.length < 1) {
         searchObjetives();
         searchInstitution();

@@ -26,8 +26,8 @@ import { Search as SearchIcon } from "../../icons/search";
 const UserListToolbar = ({ updateView, idInstitute, setIdInstitute, institutions }) => {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
-  const [institutionId, setInstitutionId] = useState([]);
-  const [idInstitucion, setIdInstitucion] = useState([]);
+  const [institutionId, setInstitutionId] = useState("");
+  const [idInstitucion, setIdInstitucion] = useState("");
   const [usuario, setUsuario] = useState({
     apellido: "",
     email: "",
@@ -91,8 +91,8 @@ const UserListToolbar = ({ updateView, idInstitute, setIdInstitute, institutions
   };
 
   const handleChangeSelect = (event) => {
-    setInstitutionId(event.target.value);
-    setIdInstitute(event.target.value);
+    setIdInstitute(event.target.value.idInstitucion);
+    setInstitutionId(event.target.value.idInstitucion);
   };
 
   const handleChangeInstitucion = (event) => {
@@ -160,7 +160,7 @@ const UserListToolbar = ({ updateView, idInstitute, setIdInstitute, institutions
                         <em>--Seleccione--</em>
                       </MenuItem>
                       {institutions.map((institute) => (
-                        <MenuItem key={institute.idInstitucion} value={institute.idInstitucion}>
+                        <MenuItem key={institute.idInstitucion} value={institute}>
                           {institute.nombre}
                         </MenuItem>
                       ))}

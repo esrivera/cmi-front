@@ -110,50 +110,48 @@ const ObjetiveListResults = ({ objetives, updateView }) => {
     <>
       <Card>
         <PerfectScrollbar>
-          <Box sx={{ minWidth: 850 }}>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Nombre</TableCell>
-                    <TableCell>Descripción</TableCell>
-                    <TableCell>Opción</TableCell>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Descripción</TableCell>
+                  <TableCell>Opción</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {objetives.slice(0, limit).map((objetivo) => (
+                  <TableRow
+                    hover
+                    key={objetivo.id}
+                    selected={selectedObjetiveIds.indexOf(objetivo.id) !== -1}
+                  >
+                    <TableCell>
+                      <Box
+                        sx={{
+                          alignItems: "center",
+                          display: "flex",
+                        }}
+                      >
+                        <Typography color="textPrimary" variant="body1">
+                          {objetivo.nombre}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>{objetivo.descripcion}</TableCell>
+                    <TableCell>
+                      <IconButton color="default" onClick={() => handleEdit({ ...objetivo })}>
+                        <EditRoundedIcon></EditRoundedIcon>
+                      </IconButton>
+                      <IconButton color="default" onClick={() => handleDelete(objetivo.id)}>
+                        <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {objetives.slice(0, limit).map((objetivo) => (
-                    <TableRow
-                      hover
-                      key={objetivo.id}
-                      selected={selectedObjetiveIds.indexOf(objetivo.id) !== -1}
-                    >
-                      <TableCell>
-                        <Box
-                          sx={{
-                            alignItems: "center",
-                            display: "flex",
-                          }}
-                        >
-                          <Typography color="textPrimary" variant="body1">
-                            {objetivo.nombre}
-                          </Typography>
-                        </Box>
-                      </TableCell>
-                      <TableCell>{objetivo.descripcion}</TableCell>
-                      <TableCell>
-                        <IconButton color="default" onClick={() => handleEdit({ ...objetivo })}>
-                          <EditRoundedIcon></EditRoundedIcon>
-                        </IconButton>
-                        <IconButton color="default" onClick={() => handleDelete(objetivo.id)}>
-                          <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </PerfectScrollbar>
         <TablePagination
           component="div"

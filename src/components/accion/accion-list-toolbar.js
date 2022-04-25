@@ -175,12 +175,12 @@ const ActionListToolbar = ({ updateView, idObjetive, setIdObjetive, objetives })
             </Button>
           </Box>
         </Box>
-        <Box sx={{ mt: 3 }}>
+        <Box sx={{ mt: 3, flexWrap: "wrap"}}>
           <Card>
             <CardContent>
               <Grid container spacing={2}>
                 <Grid item xs={6}>
-                  <Box sx={{ maxWidth: 400 }}>
+                  <Box sx={{ width: 300 }}>
                     <TextField
                       fullWidth
                       InputProps={{

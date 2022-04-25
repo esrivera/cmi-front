@@ -105,59 +105,57 @@ const InstitutionListResults = ({ customers, updateView }) => {
 
   return (
     <>
-      <Card>
+      <Card style={{ overflowX: "scroll", width: "100%" }}>
         <PerfectScrollbar>
-          <Box sx={{ minWidth: 850 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Nombre</TableCell>
-                  <TableCell>Siglas</TableCell>
-                  <TableCell>Correo</TableCell>
-                  <TableCell>Dirección</TableCell>
-                  <TableCell>Teléfono</TableCell>
-                  <TableCell>Opción</TableCell>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Nombre</TableCell>
+                <TableCell>Siglas</TableCell>
+                <TableCell>Correo</TableCell>
+                <TableCell>Dirección</TableCell>
+                <TableCell>Teléfono</TableCell>
+                <TableCell>Opción</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {customers.slice(page * limit, page * limit + limit).map((customer) => (
+                <TableRow
+                  hover
+                  key={customer.idInstitucion}
+                  selected={selectedCustomerIds.indexOf(customer.idInstitucion) !== -1}
+                >
+                  <TableCell>
+                    <Box
+                      sx={{
+                        alignItems: "center",
+                        display: "flex",
+                      }}
+                    >
+                      <Typography color="textPrimary" variant="body1">
+                        {customer.nombre}
+                      </Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell>{customer.siglas}</TableCell>
+                  <TableCell>{customer.correo}</TableCell>
+                  <TableCell>{customer.direccion}</TableCell>
+                  <TableCell>{customer.telefono}</TableCell>
+                  <TableCell>
+                    <IconButton color="default" onClick={() => handleEdit({ ...customer })}>
+                      <EditRoundedIcon></EditRoundedIcon>
+                    </IconButton>
+                    <IconButton
+                      color="default"
+                      onClick={() => handleDelete(customer.idInstitucion)}
+                    >
+                      <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {customers.slice(0, limit).map((customer) => (
-                  <TableRow
-                    hover
-                    key={customer.idInstitucion}
-                    selected={selectedCustomerIds.indexOf(customer.idInstitucion) !== -1}
-                  >
-                    <TableCell>
-                      <Box
-                        sx={{
-                          alignItems: "center",
-                          display: "flex",
-                        }}
-                      >
-                        <Typography color="textPrimary" variant="body1">
-                          {customer.nombre}
-                        </Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell>{customer.siglas}</TableCell>
-                    <TableCell>{customer.correo}</TableCell>
-                    <TableCell>{customer.direccion}</TableCell>
-                    <TableCell>{customer.telefono}</TableCell>
-                    <TableCell>
-                      <IconButton color="default" onClick={() => handleEdit({ ...customer })}>
-                        <EditRoundedIcon></EditRoundedIcon>
-                      </IconButton>
-                      <IconButton
-                        color="default"
-                        onClick={() => handleDelete(customer.idInstitucion)}
-                      >
-                        <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
+              ))}
+            </TableBody>
+          </Table>
         </PerfectScrollbar>
         <TablePagination
           component="div"

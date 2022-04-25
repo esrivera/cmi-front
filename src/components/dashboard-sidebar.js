@@ -41,7 +41,7 @@ const items = [
     title: "Acciones Estratégicas",
   },
   {
-    href: "/cmi",
+    href: "/cmi/historico",
     icon: <ManageSearchRoundedIcon fontSize="small" />,
     title: "Histórico CMI",
   },
@@ -60,7 +60,7 @@ const items = [
 export const DashboardSidebar = (props) => {
   const { open, onClose } = props;
   const router = useRouter();
-  const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"), {
+  const lgUp = useMediaQuery((theme) => theme.breakpoints.up("sm"), {
     defaultMatches: true,
     noSsr: false,
   });

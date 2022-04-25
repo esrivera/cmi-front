@@ -13,10 +13,11 @@ import EngineeringRoundedIcon from "@mui/icons-material/EngineeringRounded";
 import ManageSearchRoundedIcon from "@mui/icons-material/ManageSearchRounded";
 import { Logo } from "./logo";
 import { NavItem } from "./nav-item";
+import { NoEncryption } from "@mui/icons-material";
 
 const items = [
   {
-    href: "/usuario/user",
+    href: "/usuario/informacion",
     icon: <UserIcon fontSize="small" />,
     title: "Perfil",
   },
@@ -35,7 +36,7 @@ const items = [
 export const DashboardSidebarUser = (props) => {
   const { open, onClose } = props;
   const router = useRouter();
-  const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"), {
+  const lgUp = useMediaQuery((theme) => theme.breakpoints.up("sm"), {
     defaultMatches: true,
     noSsr: false,
   });

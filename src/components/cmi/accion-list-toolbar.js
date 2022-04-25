@@ -11,9 +11,12 @@ import {
   MenuItem,
   Select,
   InputLabel,
+  Button,
 } from "@mui/material";
+import Link from "next/link";
 import React, { useState } from "react";
 import { Search as SearchIcon } from "../../icons/search";
+import KeyboardReturnRoundedIcon from "@mui/icons-material/KeyboardReturnRounded";
 
 const CmiListToolbar = ({
   updateView,
@@ -52,6 +55,11 @@ const CmiListToolbar = ({
           <Typography sx={{ m: 1 }} variant="h4">
             Gestión CMI
           </Typography>
+          <Link href="/inicio">
+            <Button variant="outlined" sx={{ m: 4 }}>
+              <KeyboardReturnRoundedIcon></KeyboardReturnRoundedIcon>Volver
+            </Button>
+          </Link>
         </Box>
         <Box sx={{ mt: 3 }}>
           <Card>

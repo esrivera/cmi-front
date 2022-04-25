@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Box,
@@ -10,9 +10,13 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
+  FormControl,
   Grid,
   IconButton,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -33,6 +37,8 @@ import CloudDownloadRoundedIcon from "@mui/icons-material/CloudDownloadRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
+import ThumbUpRoundedIcon from "@mui/icons-material/ThumbUpRounded";
+import ThumbDownAltRoundedIcon from "@mui/icons-material/ThumbDownAltRounded";
 import { validationMeta } from "src/utils/validationInputs";
 
 const CmiListResults = ({ actions, updateView, objetives }) => {
@@ -43,6 +49,10 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
   const [idIndicador, setIdIndicador] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [errors, setErrors] = useState({});
+  const [anioPlanificado, setAnioPlanificado] = useState("");
+  const [porcentajePlanificado, setPorcentajePlanificado] = useState("");
+  const [evidencias, setEvidencias] = useState([]);
+  const [idMeta, setIdMeta] = useState(0);
   const [meta, setMeta] = useState({
     anioPlanificado: 0,
     idIndicador: 0,
@@ -160,10 +170,15 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
 
   const handleEvidencia = (data) => {
     setOpenEvidencia(true);
+    searchMetas(data.indicador[0].id);
   };
 
   const handleCloseEvidencia = () => {
     setOpenEvidencia(false);
+    setOpenEvidencia(false);
+    setAnioPlanificado("");
+    setPorcentajePlanificado("");
+    setEvidencias([]);
   };
 
   const handleCloseObservacion = () => {
@@ -190,8 +205,8 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
     searchMetas(data.indicador[0].id);
   };
 
-  const searchMetas = async (id) => {
-    await clientPublic
+  const searchMetas = (id) => {
+    clientPublic
       .get(
         query.uri + id + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort
       )
@@ -256,11 +271,61 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
     setOpenDescripcion(false);
   };
 
+  const handleChangeSelect = (event) => {
+    setEvidencias([]);
+    setAnioPlanificado(event.target.value);
+    let metaAux = metas.find((metaAux) => metaAux.anioPlanificado === event.target.value);
+    setIdMeta(metaAux.id);
+  };
+
+  useEffect(() => {
+    if (anioPlanificado > 0) {
+      searchActivities();
+    }
+  }, [anioPlanificado]);
+
+  const searchActivities = async () => {
+    await clientPublic
+      .get(apis.actividad.get_by_anio + anioPlanificado + "/" + idMeta)
+      .then((result) => {
+        if (result.status === 200) {
+          setEvidencias(result.data.lstActivitidadMeta);
+          setPorcentajePlanificado(result.data.porcentajeOAccionPlanificado);
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          //msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+          console.log("Error de consulta");
+        }
+      });
+  };
+
+  const handleDownload = (data) => {
+    clientPublic
+      .get(apis.actividad.get_evidencia + data.id, {
+        responseType: "blob",
+      })
+      .then((res) => {
+        fileDownload(res.data, "documento.pdf");
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+        }
+      });
+  };
+
+  const handleChangeEstado = (data) => {
+    // pendiente de culminar
+    console.log(data);
+  };
+
   return (
     <>
       <Card>
         <PerfectScrollbar>
-          <Box sx={{ minWidth: 850 }}>
+          <Box>
             <TableContainer>
               <Table>
                 <TableHead>
@@ -581,36 +646,78 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
         onClose={handleCloseEvidencia}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        maxWidth={"md"}
         fullWidth
       >
-        <DialogTitle id="alert-dialog-title">Lista de Metas por Año</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Lista de Actividades por Año</DialogTitle>
         <DialogContent>
+          <FormControl sx={{ minWidth: 120, marginTop: 2, marginBottom: 2 }}>
+            <InputLabel id="demo-simple-select-autowidth-label">Año</InputLabel>
+            <Select
+              value={anioPlanificado}
+              onChange={handleChangeSelect}
+              id="demo-controlled-open-select"
+              labelId="demo-controlled-open-select-label"
+              label="label"
+            >
+              <MenuItem disabled value="">
+                <em>--Seleccione--</em>
+              </MenuItem>
+              {metas.map((meta) => (
+                <MenuItem key={meta.id} value={meta.anioPlanificado}>
+                  {meta.anioPlanificado}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <Grid item md={12} xs={12}>
             <TableContainer component={Paper}>
               <Table sx={{ minWidth: 300 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Año</TableCell>
-                    <TableCell align="right">Acciones o Porcentaje Planificado</TableCell>
-                    <TableCell align="right">Acciones o Porcentaje Realizado</TableCell>
-                    <TableCell align="right">Observación</TableCell>
-                    <TableCell align="right">Evidencia</TableCell>
+                    <TableCell align="rigth">Año</TableCell>
+                    <TableCell align="rigth">Acciones o Porcentaje Planificado</TableCell>
+                    <TableCell align="rigth">Acciones o Porcentaje Realizado</TableCell>
+                    <TableCell align="rigth">Observación</TableCell>
+                    <TableCell align="rigth">Estado</TableCell>
+                    <TableCell aling="rigth">Acción</TableCell>
+                    <TableCell align="rigth">Evidencia</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
+                  {evidencias.map((row) => (
                     <TableRow
                       key={row.name}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.name}
+                        {row.anioAvance}
                       </TableCell>
-                      <TableCell align="right">{row.valor}</TableCell>
-                      <TableCell align="right">{row.avance}</TableCell>
-                      <TableCell align="right">{row.detalle}</TableCell>
-                      <TableCell align="right">
-                        <IconButton>
+                      <TableCell align="rigth">{porcentajePlanificado}</TableCell>
+                      <TableCell align="rigth">{row.porcentajeAvance}</TableCell>
+                      <TableCell align="rigth">{row.descripcionActMeta}</TableCell>
+                      <TableCell align="rigth">{row.estadoAprobacion}</TableCell>
+                      <TableCell align="rigth">
+                        <IconButton
+                          style={{ color: "green", fontSize: 13 }}
+                          color="default"
+                          onClick={() => handleChangeEstado({ ...row })}
+                        >
+                          <ThumbUpRoundedIcon></ThumbUpRoundedIcon>
+                          <p>{"Aprobar"}</p>
+                        </IconButton>
+                        <IconButton
+                          style={{ color: "red", fontSize: 13 }}
+                          color="default"
+                          onClick={() => handleChangeEstado({ ...row })}
+                        >
+                          <ThumbDownAltRoundedIcon></ThumbDownAltRoundedIcon>
+                          <p>{"Desaprobar"}</p>
+                        </IconButton>
+                      </TableCell>
+                      <TableCell align="rigth">
+                        <IconButton color="default" onClick={() => handleDownload({ ...row })}>
                           <CloudDownloadRoundedIcon></CloudDownloadRoundedIcon>
                         </IconButton>
                       </TableCell>

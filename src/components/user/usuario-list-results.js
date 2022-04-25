@@ -139,7 +139,7 @@ const UserListResults = ({ users, institutions, updateView }) => {
     <>
       <Card>
         <PerfectScrollbar>
-          <Box sx={{ minWidth: 850 }}>
+          <Box>
             <TableContainer>
               <Table>
                 <TableHead>
@@ -153,7 +153,7 @@ const UserListResults = ({ users, institutions, updateView }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {users.slice(0, limit).map((user) => (
+                  {users.slice(page * limit, page * limit + limit).map((user) => (
                     <TableRow
                       hover
                       key={user.id}
@@ -181,7 +181,7 @@ const UserListResults = ({ users, institutions, updateView }) => {
         </PerfectScrollbar>
         <TablePagination
           component="div"
-          count={users?.length}
+          count={users.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}

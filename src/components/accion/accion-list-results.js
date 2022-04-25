@@ -15,6 +15,7 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   Table,
   TableBody,
@@ -29,6 +30,7 @@ import {
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import BatchPredictionRoundedIcon from "@mui/icons-material/BatchPredictionRounded";
 import apis from "src/utils/bookApis";
+import SummarizeRoundedIcon from "@mui/icons-material/SummarizeRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import PowerSettingsNewRoundedIcon from "@mui/icons-material/PowerSettingsNewRounded";
 import { clientPublic } from "src/api/axios";
@@ -41,12 +43,14 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
   const [idAccionEstrategica, setIdAccionEstrategica] = useState("");
   const [idIndicador, setIdindicador] = useState("");
   const [estado, setEstado] = useState(false);
+  const [openList, setOpenList] = useState(false);
   const [idAccion, setIdAccion] = useState("");
   const [idFormula, setIdFormula] = useState("");
   const [institution, setInstitution] = useState([]);
   const [idObjetivo, setIdObjetivo] = useState([]);
   const [idInstitucion, setIdInstitucion] = useState([]);
   const [periodicidad, setPeriodicidad] = useState([]);
+  const [metas, setMetas] = useState([]);
   const [errors, setErrors] = useState({});
   const [accion, setAccion] = useState({
     descDenominador: "",
@@ -69,6 +73,15 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
     page: 0,
     elementos: 15,
     sort: "nombre,asc",
+  };
+
+  const queryMeta = {
+    uri: apis.meta.get_all_indicador,
+    metodo: "get",
+    body: null,
+    page: 0,
+    elementos: 15,
+    sort: "anioPlanificado,asc",
   };
 
   const handleLimitChange = (event) => {
@@ -120,6 +133,39 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
         }
       });
     updateView();
+  };
+
+  const handleList = (data) => {
+    setOpenList(true);
+    searchMetas(data.indicador[0].id);
+  };
+
+  const handleCloseList = () => {
+    setOpenList(false);
+  };
+
+  const searchMetas = async (id) => {
+    await clientPublic
+      .get(
+        queryMeta.uri +
+          id +
+          "?page=" +
+          queryMeta.page +
+          "&size=" +
+          queryMeta.elementos +
+          "&sort=" +
+          queryMeta.sort
+      )
+      .then((result) => {
+        if (result.status === 200) {
+          setMetas(result.data.content);
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+        }
+      });
   };
 
   const handleChangeInstitucion = (event) => {
@@ -258,7 +304,7 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
     <>
       <Card>
         <PerfectScrollbar>
-          <Box sx={{ minWidth: 850 }}>
+          <Box>
             <TableContainer>
               <Table>
                 <TableHead>
@@ -267,6 +313,7 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
                     <TableCell>Descripción</TableCell>
                     <TableCell>Periodicidad</TableCell>
                     <TableCell>Responsable</TableCell>
+                    <TableCell>Metas</TableCell>
                     <TableCell>Estado</TableCell>
                     <TableCell>Opción</TableCell>
                   </TableRow>
@@ -294,13 +341,18 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
                       <TableCell>{accion.perioricidadReporte}</TableCell>
                       <TableCell>{accion.institucion.siglas}</TableCell>
                       <TableCell>
+                        <IconButton color="default" onClick={() => handleList({ ...accion })}>
+                          <SummarizeRoundedIcon></SummarizeRoundedIcon>
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
                         <IconButton
-                          style={{ color: accion.estado ? "red" : "green", fontSize: 13 }}
+                          style={{ color: accion.estado ? "green" : "red", fontSize: 13 }}
                           color="default"
                           onClick={() => handleActive({ ...accion })}
                         >
                           <PowerSettingsNewRoundedIcon></PowerSettingsNewRoundedIcon>
-                          <p>{accion.estado ? "Desactivar" : "Activar"}</p>
+                          <p>{accion.estado ? "Activo" : "Inactivo"}</p>
                         </IconButton>
                       </TableCell>
                       <TableCell>
@@ -328,6 +380,7 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Card>
+      {/*Form editar acción*/}
       <Dialog fullWidth maxWidth="md" open={open} onClose={handleClose} disableEscapeKeyDown>
         <DialogTitle id="max-width-dialog-title">Editar Acción Estratégica</DialogTitle>
         <DialogContent>
@@ -537,7 +590,7 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
           </form>
         </DialogContent>
       </Dialog>
-
+      {/*Mesanje de confirmación*/}
       <Dialog
         open={openActive}
         onClose={handleCloseActive}
@@ -547,15 +600,59 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
         <DialogTitle id="alert-dialog-title">¿Estas Seguro/a?</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            ¿Está seguro/a de querer desactivar esta acción estratégica?, no se mostrará en el CMI
-            si se desactiva la misma
+            {estado
+              ? "¿Está seguro/a de querer activar esta acción estratégica?"
+              : "¿Está seguro/a de querer desactivar esta acción estratégica?, no se mostrará en el CMI si se desactiva la misma"}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleChangeEstado} autoFocus>
-            Aceptar
+            Si
           </Button>
-          <Button onClick={handleCloseActive}>Cancelar</Button>
+          <Button onClick={handleCloseActive}>No</Button>
+        </DialogActions>
+      </Dialog>
+      {/*Listado de metas por año*/}
+      <Dialog
+        open={openList}
+        onClose={handleCloseList}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Lista de Metas por Año</DialogTitle>
+        <DialogContent>
+          <Grid item md={12} xs={12}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 300 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Año</TableCell>
+                    <TableCell align="right">Nro. de Acciones o Porcentaje</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {metas.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row.anioPlanificado}
+                      </TableCell>
+                      <TableCell align="right">
+                        {row.numeroAcciones > 0
+                          ? row.numeroAcciones
+                          : row.porcentajePlanficadoPorAnio}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseList}>Cerrar</Button>
         </DialogActions>
       </Dialog>
     </>

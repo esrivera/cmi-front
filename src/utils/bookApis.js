@@ -37,4 +37,10 @@ export default {
   indicador: {
     patch_observacion: "/indicador/",
   },
+  actividad: {
+    post_add: "/actMetas",
+    post_aprobacion: "/actMetas/aprobacion",
+    get_by_anio: "/actMetas/byAnioAndMeta/",
+    get_evidencia: "/actMetas/evidencia/",
+  },
 };

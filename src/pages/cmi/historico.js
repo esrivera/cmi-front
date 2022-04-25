@@ -8,7 +8,7 @@ import { msmSwalError } from "src/theme/theme";
 import CmiListToolbar from "src/components/cmi/accion-list-toolbar";
 import CmiListResults from "src/components/cmi/accion-list-results";
 
-const CMI = () => {
+const CMIH = () => {
   const [update, setUpdate] = useState(0);
   const [objetive, setObjetive] = useState([]);
   const [action, setAction] = useState([]);
@@ -90,7 +90,7 @@ const CMI = () => {
         return (
           <>
             <Head>
-              <title>Gestión | CMI</title>
+              <title>Histórico | CMI</title>
             </Head>
             <Box
               component="main"
@@ -155,7 +155,7 @@ const CMI = () => {
     setUpdate(3);
     clientPublic
       .get(query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort, {
-        params: { estado: true },
+        params: { estado: false },
       })
       .then((result) => {
         if (result.status === 200) {
@@ -197,4 +197,4 @@ const CMI = () => {
 };
 //CMI.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
-export default CMI;
+export default CMIH;
