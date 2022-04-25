@@ -316,9 +316,52 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
       });
   };
 
-  const handleChangeEstado = (data) => {
-    // pendiente de culminar
-    console.log(data);
+  const handleChangeEstadoAprobado = (data) => {
+    const bodyAprobacion = {
+      estadoAprobacion: true,
+      idActividadMeta: data.id,
+    };
+    clientPublic
+      .post(apis.actividad.post_aprobacion, bodyAprobacion)
+      .then((res) => {
+        if (res.status >= 200 && res.status < 300) {
+          msmSwalExito("Actividad aprobada satisfactoriamente");
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          if (exception.response.status >= 400 && exception.response.status < 500) {
+            msmSwalError("No se pudo aprobar la meta");
+          }
+        } else {
+          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
+        }
+      });
+    updateView();
+  };
+
+  const handleChangeEstadoDesaprobado = (data) => {
+    const bodyAprobacion = {
+      estadoAprobacion: false,
+      idActividadMeta: data.id,
+    };
+    clientPublic
+      .post(apis.actividad.post_aprobacion, bodyAprobacion)
+      .then((res) => {
+        if (res.status >= 200 && res.status < 300) {
+          msmSwalExito("Actividad desaprobada satisfactoriamente");
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          if (exception.response.status >= 400 && exception.response.status < 500) {
+            msmSwalError("No se pudo aprobar la meta");
+          }
+        } else {
+          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
+        }
+      });
+    updateView();
   };
 
   return (
@@ -702,7 +745,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                         <IconButton
                           style={{ color: "green", fontSize: 13 }}
                           color="default"
-                          onClick={() => handleChangeEstado({ ...row })}
+                          onClick={() => handleChangeEstadoAprobado({ ...row })}
                         >
                           <ThumbUpRoundedIcon></ThumbUpRoundedIcon>
                           <p>{"Aprobar"}</p>
@@ -710,7 +753,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                         <IconButton
                           style={{ color: "red", fontSize: 13 }}
                           color="default"
-                          onClick={() => handleChangeEstado({ ...row })}
+                          onClick={() => handleChangeEstadoDesaprobado({ ...row })}
                         >
                           <ThumbDownAltRoundedIcon></ThumbDownAltRoundedIcon>
                           <p>{"Desaprobar"}</p>

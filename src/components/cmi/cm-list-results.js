@@ -39,6 +39,7 @@ import { clientPublic } from "src/api/axios";
 import fileDownload from "js-file-download";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 import { validationActivity, validationMeta } from "src/utils/validationInputs";
+import { parseJwt } from "src/utils/userAction";
 
 const CmiListResultsUser = ({ actions, updateView, objetives }) => {
   const [selectedActionIds, setSelectedActionIds] = useState([]);
@@ -130,6 +131,12 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
       descripcionActMeta: descripcionActMeta,
       file: file,
     };
+    const ISSERVER = typeof window === "undefined";
+    const ci = "";
+    if (!ISSERVER) {
+      const token = localStorage.getItem("token");
+      ci = parseJwt(token).CI;
+    }
     const newErrors = validationActivity.submitActivity(data);
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
@@ -143,6 +150,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
             idIndicador: indicadorId,
             idMeta: metaId,
             porcentajeAvance: porcentajeAvance,
+            ciUsuario: ci,
           },
         })
         .then((res) => {
@@ -219,22 +227,31 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
     setAnioAccion(year);
     setIndicadorId(data.indicador[0].id);
     searchMetas(data.indicador[0].id);
+    // if (metas.length > 0) {
+    //   for (let i = 0; i < metas.length; i++) {
+    //     if (metas[i].anioPlanificado == year) {
+    //       setValorAccion(metas[i].numeroAcciones);
+    //       setMetaId(metas[i].id);
+    //       setOpenActive(true);
+    //     }
+    //   }
+    // } else {
+    //   setMensaje(
+    //     "No se han agregado metas para el año " +
+    //       year +
+    //       ". Pongase en contacto con el administrador del sistema."
+    //   );
+    //   setOpenMensaje(true);
+    // }
     if (metas.length > 0) {
       for (let i = 0; i < metas.length; i++) {
         if (metas[i].anioPlanificado == year) {
           setValorAccion(metas[i].numeroAcciones);
           setMetaId(metas[i].id);
-          setOpenActive(true);
         }
       }
-    } else {
-      setMensaje(
-        "No se han agregado metas para el año " +
-          year +
-          ". Pongase en contacto con el administrador del sistema."
-      );
-      setOpenMensaje(true);
     }
+    setOpenActive(true);
     setErrors({});
   };
 
@@ -291,6 +308,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
   };
 
   const handleChangeSelect = (event) => {
+    setEvidencias([]);
     setAnioPlanificado(event.target.value);
     let metaAux = metas.find((metaAux) => metaAux.anioPlanificado === event.target.value);
     setIdMeta(metaAux.id);
@@ -445,7 +463,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
           rowsPerPageOptions={[5, 10, 25]}
         />
       </Card>
-      {/* Agregar Metas */}
+      {/* Agregar Actividades Meta */}
       <Dialog
         fullWidth
         maxWidth="sm"
