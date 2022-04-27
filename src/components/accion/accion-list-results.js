@@ -319,7 +319,7 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {actions.slice(0, limit).map((accion) => (
+                  {actions.slice(page * limit, page * limit + limit).map((accion) => (
                     <TableRow
                       hover
                       key={accion.id}

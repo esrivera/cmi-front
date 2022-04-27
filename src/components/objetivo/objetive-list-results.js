@@ -120,7 +120,7 @@ const ObjetiveListResults = ({ objetives, updateView }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {objetives.slice(0, limit).map((objetivo) => (
+                {objetives.slice(page * limit, page * limit + limit).map((objetivo) => (
                   <TableRow
                     hover
                     key={objetivo.id}

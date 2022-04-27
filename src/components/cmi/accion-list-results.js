@@ -54,7 +54,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
   const [evidencias, setEvidencias] = useState([]);
   const [idMeta, setIdMeta] = useState(0);
   const [meta, setMeta] = useState({
-    anioPlanificado: 0,
+    anioPlanificado: 2021,
     idIndicador: 0,
     numeroAcciones: 0,
     porcentajePlanficadoPorAnio: "",
@@ -76,17 +76,6 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
     elementos: 15,
     sort: "anioPlanificado,asc",
   };
-
-  function createData(name, valor, avance, detalle) {
-    return { name, valor, avance, detalle };
-  }
-
-  const rows = [
-    createData("2021", 10, 10, "Finalizado"),
-    createData("2022", 25, 3, "En Proceso"),
-    createData("2023", 35, 0, ""),
-    createData("2024", 30, 0, ""),
-  ];
 
   const handleLimitChange = (event) => {
     setLimit(+event.target.value);
@@ -225,7 +214,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
   const handleCloseActive = () => {
     setOpenActive(false);
     setMeta({
-      anioPlanificado: 0,
+      anioPlanificado: 2021,
       idIndicador: 0,
       numeroAcciones: 0,
       porcentajePlanficadoPorAnio: "",
@@ -289,14 +278,17 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
       .get(apis.actividad.get_by_anio + anioPlanificado + "/" + idMeta)
       .then((result) => {
         if (result.status === 200) {
-          setEvidencias(result.data.lstActivitidadMeta);
+          if (result.data.lstActivitidadMeta != null) {
+            setEvidencias(result.data.lstActivitidadMeta);
+          } else {
+            setEvidencias([]);
+          }
           setPorcentajePlanificado(result.data.porcentajeOAccionPlanificado);
         }
       })
       .catch((exception) => {
         if (exception.response) {
-          //msmSwalError("Ocurrio un problema en la red al consultar los datos.");
-          console.log("Error de consulta");
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
         }
       });
   };
@@ -387,7 +379,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {actions.slice(0, limit).map((accion) => (
+                  {actions.slice(page * limit, page * limit + limit).map((accion) => (
                     <TableRow
                       hover
                       key={accion.id}
@@ -445,7 +437,11 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                           <FilterNoneRoundedIcon></FilterNoneRoundedIcon>
                         </IconButton>
                       </TableCell>
-                      <TableCell>{accion.porcentaje}</TableCell>
+                      <TableCell>
+                        {accion.indicador[0].porcentajeIndicadorPorAnio != null
+                          ? accion.indicador[0].porcentajeIndicadorPorAnio
+                          : 0}
+                      </TableCell>
                       {/* <TableCell>12</TableCell> */}
                       <TableCell>
                         <IconButton color="default" onClick={() => handleEdit({ ...accion })}>
@@ -518,6 +514,9 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                 onChange={handleChange}
                 value={meta.numeroAcciones}
               />
+              {errors.numeroAcciones ? (
+                <p style={{ color: "red", fontSize: 11 }}>{errors.numeroAcciones}</p>
+              ) : null}
             </Grid>
             <Grid container alignContent="center" sx={{ mt: 1 }} justify="flex-end">
               <Grid item md={12} xs={12}>

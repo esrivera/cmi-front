@@ -26,11 +26,11 @@ const items = [
     icon: <EngineeringRoundedIcon fontSize="small" />,
     title: "Gestión CMI",
   },
-  {
-    href: "/estadistica",
-    icon: <ChartBarIcon fontSize="small" />,
-    title: "Estadísticas",
-  },
+  // {
+  //   href: "/estadistica",
+  //   icon: <ChartBarIcon fontSize="small" />,
+  //   title: "Estadísticas",
+  // },
 ];
 
 export const DashboardSidebarUser = (props) => {

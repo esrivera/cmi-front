@@ -81,17 +81,6 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
     sort: "anioPlanificado,asc",
   };
 
-  function createData(name, valor, avance, detalle) {
-    return { name, valor, avance, detalle };
-  }
-
-  const rows = [
-    createData("2021", 10, 10, "Finalizado"),
-    createData("2022", 25, 3, "En Proceso"),
-    createData("2023", 35, 0, ""),
-    createData("2024", 30, 0, ""),
-  ];
-
   const handleLimitChange = (event) => {
     setLimit(+event.target.value);
     setPage(0);
@@ -221,6 +210,19 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
     setObservacion(data.indicador[0].observaciones);
   };
 
+  useEffect(() => {
+    var currentTime = new Date();
+    var year = currentTime.getFullYear();
+    if (metas.length > 0) {
+      for (let i = 0; i < metas.length; i++) {
+        if (metas[i].anioPlanificado == year) {
+          setValorAccion(metas[i].numeroAcciones);
+          setMetaId(metas[i].id);
+        }
+      }
+    }
+  }, [metas]);
+
   const handleActive = (data) => {
     var currentTime = new Date();
     var year = currentTime.getFullYear();
@@ -243,14 +245,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
     //   );
     //   setOpenMensaje(true);
     // }
-    if (metas.length > 0) {
-      for (let i = 0; i < metas.length; i++) {
-        if (metas[i].anioPlanificado == year) {
-          setValorAccion(metas[i].numeroAcciones);
-          setMetaId(metas[i].id);
-        }
-      }
-    }
+
     setOpenActive(true);
     setErrors({});
   };
@@ -325,14 +320,17 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
       .get(apis.actividad.get_by_anio + anioPlanificado + "/" + idMeta)
       .then((result) => {
         if (result.status === 200) {
-          setEvidencias(result.data.lstActivitidadMeta);
+          if (result.data.lstActivitidadMeta != null) {
+            setEvidencias(result.data.lstActivitidadMeta);
+          } else {
+            setEvidencias([]);
+          }
           setPorcentajePlanificado(result.data.porcentajeOAccionPlanificado);
         }
       })
       .catch((exception) => {
         if (exception.response) {
-          //msmSwalError("Ocurrio un problema en la red al consultar los datos.");
-          console.log("Error de consulta");
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
         }
       });
   };
@@ -375,7 +373,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {actions.slice(0, limit).map((accion) => (
+                  {actions.slice(page * limit, page * limit + limit).map((accion) => (
                     <TableRow
                       hover
                       key={accion.id}
@@ -550,6 +548,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
                 <p style={{ fontSize: 18 }}>Evidencia</p>
                 <p style={{ color: "blue", fontSize: 14, marginLeft: 2 }}>{nombreArchivo}</p>
               </IconButton>
+              <p style={{ fontSize: 13 }}>Cargar un solo archivo PDF</p>
               {errors.file ? <p style={{ color: "red", fontSize: 11 }}>{errors.file}</p> : null}
             </Grid>
             <Grid container alignContent="center" sx={{ mt: 1 }} justify="flex-end">

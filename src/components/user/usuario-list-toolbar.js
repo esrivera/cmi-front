@@ -217,7 +217,7 @@ const UserListToolbar = ({ updateView, idInstitute, setIdInstitute, institutions
                 {errors.apellido ? <p>{errors.apellido}</p> : null}
               </Grid>
               <Grid item md={5} xs={12}>
-                <FormControl sx={{ minWidth: 395 }}>
+                <FormControl sx={{ width: 395 }}>
                   <InputLabel id="demo-simple-select-autowidth-label">Institución</InputLabel>
                   <Select
                     value={idInstitucion}
