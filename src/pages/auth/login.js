@@ -4,7 +4,13 @@ import {
   Box,
   Button,
   Container,
+  FormControl,
+  Grid,
+  IconButton,
+  InputAdornment,
+  InputLabel,
   Link,
+  OutlinedInput,
   TextField,
   Typography,
 } from "@mui/material";
@@ -15,15 +21,27 @@ import { parseJwt } from "src/utils/userAction";
 import apis from "src/utils/bookApis";
 import { useRouter } from "next/router";
 import { msmSwalError } from "src/theme/theme";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Login = () => {
-  const [user, setUser] = useState({ username: "", password: "" });
+  const [user, setUser] = useState({ username: "", password: "", showPassword: false });
   const router = useRouter();
   const handleChange = (event) => {
     setUser({
       ...user,
       [event.target.name]: event.target.value,
     });
+  };
+
+  const handleClickShowPassword = () => {
+    setUser({
+      ...user,
+      showPassword: !user.showPassword,
+    });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
 
   const handleAutentication = (e) => {
@@ -77,29 +95,48 @@ const Login = () => {
             <Image width={450} height={250} src="/img/conse1.jpg" alt="logo" />
           </div>
           <form onSubmit={handleAutentication}>
-            <TextField
-              fullWidth
-              margin="normal"
-              id="outlined-disabled"
-              label="Usuario"
-              required
-              name="username"
-              placeholder="Nombre de usuario"
-              onChange={handleChange}
-              value={user.username}
-            />
-            <TextField
-              fullWidth
-              required
-              name="password"
-              margin="normal"
-              id="outlined-password-input"
-              label="Clave"
-              type="password"
-              autoComplete="current-password"
-              onChange={handleChange}
-              value={user.password}
-            />
+            <Grid item md={12} xs={12}>
+              <TextField
+                fullWidth
+                margin="normal"
+                id="outlined-disabled"
+                label="Usuario"
+                required
+                name="username"
+                placeholder="Nombre de usuario"
+                onChange={handleChange}
+                value={user.username}
+              />
+            </Grid>
+            <Grid item md={12} xs={12}>
+              <FormControl variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password">Contraseña</InputLabel>
+                <OutlinedInput
+                  type={user.showPassword ? "text" : "password"}
+                  value={user.password}
+                  name="password"
+                  required
+                  sx={{
+                    display: "flex",
+                    width: 550,
+                  }}
+                  onChange={handleChange}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {user.showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Contraseña"
+                />
+              </FormControl>
+            </Grid>
             <Box sx={{ py: 2 }}>
               <Button color="primary" fullWidth size="large" type="submit" variant="contained">
                 Iniciar Sesión

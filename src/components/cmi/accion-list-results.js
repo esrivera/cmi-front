@@ -403,6 +403,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                           onClick={() => handleDescripcion({ ...accion })}
                         >
                           <InfoRoundedIcon></InfoRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Ver</p>
                         </IconButton>
                       </TableCell>
                       <TableCell>{accion.indicador[0].nombre}</TableCell>
@@ -411,6 +412,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                       <TableCell>
                         <IconButton color="default" onClick={() => handleFormula({ ...accion })}>
                           <InfoRoundedIcon></InfoRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Ver</p>
                         </IconButton>
                       </TableCell>
                       <TableCell>
@@ -418,10 +420,12 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                           ? accion.indicador[0].porcentajeIndicador
                           : 0}
                       </TableCell>
-                      {/* <TableCell>13</TableCell> */}
                       <TableCell
                         sx={{
-                          backgroundColor: "lightgreen",
+                          backgroundColor:
+                            accion.indicador[0].estadoCumplimiento === "EN_EJECUCION"
+                              ? "lightgreen"
+                              : "red",
                         }}
                       >
                         {accion.indicador[0].estadoCumplimiento}
@@ -429,12 +433,15 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                       <TableCell>
                         <IconButton color="default" onClick={() => handleActive({ ...accion })}>
                           <LoupeRoundedIcon></LoupeRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Agregar</p>
                         </IconButton>
                         <IconButton color="default" onClick={() => handleList({ ...accion })}>
                           <SummarizeRoundedIcon></SummarizeRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Metas por Año</p>
                         </IconButton>
                         <IconButton color="default" onClick={() => handleEvidencia({ ...accion })}>
                           <FilterNoneRoundedIcon></FilterNoneRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Actividades</p>
                         </IconButton>
                       </TableCell>
                       <TableCell>
@@ -442,16 +449,17 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                           ? accion.indicador[0].porcentajeIndicadorPorAnio
                           : 0}
                       </TableCell>
-                      {/* <TableCell>12</TableCell> */}
                       <TableCell>
                         <IconButton color="default" onClick={() => handleEdit({ ...accion })}>
                           <EditRoundedIcon></EditRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Editar</p>
                         </IconButton>
                         <IconButton
                           color="default"
                           onClick={() => handleObservacion({ ...accion })}
                         >
                           <InfoRoundedIcon></InfoRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Ver</p>
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -688,7 +696,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
         onClose={handleCloseEvidencia}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        maxWidth={"md"}
+        maxWidth={"lg"}
         fullWidth
       >
         <DialogTitle id="alert-dialog-title">Lista de Actividades por Año</DialogTitle>
@@ -719,6 +727,9 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                 <TableHead>
                   <TableRow>
                     <TableCell align="rigth">Año</TableCell>
+                    <TableCell align="right" width={120}>
+                      Fecha
+                    </TableCell>
                     <TableCell align="rigth">Acciones o Porcentaje Planificado</TableCell>
                     <TableCell align="rigth">Acciones o Porcentaje Realizado</TableCell>
                     <TableCell align="rigth">Observación</TableCell>
@@ -736,27 +747,34 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                       <TableCell component="th" scope="row">
                         {row.anioAvance}
                       </TableCell>
+                      <TableCell align="right" width={120}>
+                        {row.fecha}
+                      </TableCell>
                       <TableCell align="rigth">{porcentajePlanificado}</TableCell>
                       <TableCell align="rigth">{row.porcentajeAvance}</TableCell>
                       <TableCell align="rigth">{row.descripcionActMeta}</TableCell>
                       <TableCell align="rigth">{row.estadoAprobacion}</TableCell>
                       <TableCell align="rigth">
-                        <IconButton
-                          style={{ color: "green", fontSize: 13 }}
-                          color="default"
-                          onClick={() => handleChangeEstadoAprobado({ ...row })}
-                        >
-                          <ThumbUpRoundedIcon></ThumbUpRoundedIcon>
-                          <p>{"Aprobar"}</p>
-                        </IconButton>
-                        <IconButton
-                          style={{ color: "red", fontSize: 13 }}
-                          color="default"
-                          onClick={() => handleChangeEstadoDesaprobado({ ...row })}
-                        >
-                          <ThumbDownAltRoundedIcon></ThumbDownAltRoundedIcon>
-                          <p>{"Desaprobar"}</p>
-                        </IconButton>
+                        {row.estadoAprobacion === "PENDIENTE" ? (
+                          <>
+                            <IconButton
+                              style={{ color: "green", fontSize: 13 }}
+                              color="default"
+                              onClick={() => handleChangeEstadoAprobado({ ...row })}
+                            >
+                              <ThumbUpRoundedIcon></ThumbUpRoundedIcon>
+                              <p style={{ fontSize: 14 }}>Aprobar</p>
+                            </IconButton>
+                            <IconButton
+                              style={{ color: "red", fontSize: 13 }}
+                              color="default"
+                              onClick={() => handleChangeEstadoDesaprobado({ ...row })}
+                            >
+                              <ThumbDownAltRoundedIcon></ThumbDownAltRoundedIcon>
+                              <p style={{ fontSize: 14 }}>Desaprobar</p>
+                            </IconButton>
+                          </>
+                        ) : null}
                       </TableCell>
                       <TableCell align="rigth">
                         <IconButton color="default" onClick={() => handleDownload({ ...row })}>

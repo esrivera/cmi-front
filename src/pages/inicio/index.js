@@ -24,7 +24,7 @@ const Dashboard = () => (
             justifyContent: "center",
           }}
         >
-          <Image width={650} height={250} src="/img/conse1.jpg" alt="logo" />
+          <Image width={650} height={250} src="/img/logo.png" alt="logo" />
         </div>
       </Container>
     </Box>

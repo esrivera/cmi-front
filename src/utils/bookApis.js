@@ -27,12 +27,15 @@ export default {
     post_add: "/auth/nuevo",
     get_all: "/user/institute/",
     edit_id: "/user/",
-    delete_id: "/user/",
+    patch_ci: "/user/state/",
+    get_ci: "/user/byCi/",
+    post_password: "/auth/reset-password",
   },
   meta: {
     post_add: "/metas",
     get_all_indicador: "/metas/byIndicador/",
     delete_id: "/metas/",
+    get_estado_meta: "/metas/meta-trimestre/",
   },
   indicador: {
     patch_observacion: "/indicador/",
@@ -42,5 +45,19 @@ export default {
     post_aprobacion: "/actMetas/aprobacion",
     get_by_anio: "/actMetas/byAnioAndMeta/",
     get_evidencia: "/actMetas/evidencia/",
+    delete_id: "/actMetas/",
+  },
+  reporte: {
+    by_institution_year: "/reportes/accionByInstitucionAndAnio",
+    by_objetive_year: "/reportes/accionByObjetivoAndAnio",
+    meta_by_action: "/reportes/meta-anioByAccionEstrategica/",
+  },
+  alerta: {
+    post_add: "/alertas",
+    delete_id: "/alertas/",
+    get_by_emisor: "/alertas/byInstitucionEmi/",
+    get_by_receptor: "/alertas/byInstitucionRecep/{idInstitucionRecep}",
+    get_evidencia: "/alertas/evidencia/",
+    patch_estado: "/alertas/{idAlerta}",
   },
 };

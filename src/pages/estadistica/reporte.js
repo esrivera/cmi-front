@@ -20,14 +20,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Head from "next/head";
 import apis from "src/utils/bookApis";
 import { Bar } from "react-chartjs-2";
-import { DashboardLayout } from "src/components/dashboard-layout";
 import { clientPublic } from "src/api/axios";
 import { useEffect, useState } from "react";
 import TableData from "src/components/report/tableData";
 import { msmSwalError } from "src/theme/theme";
 import { validateAnio } from "src/utils/validationInputs";
+import { DashboardLayoutUser } from "src/components/dashboard-layout-user";
 
-const Estadistica = () => {
+const Reporte = () => {
   const [institutions, setInstitutions] = useState([]);
   const [objetive, setObjetive] = useState([]);
   const [action, setAction] = useState([]);
@@ -670,6 +670,6 @@ const Estadistica = () => {
   );
 };
 
-Estadistica.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+Reporte.getLayout = (page) => <DashboardLayoutUser>{page}</DashboardLayoutUser>;
 
-export default Estadistica;
+export default Reporte;

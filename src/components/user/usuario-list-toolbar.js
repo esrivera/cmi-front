@@ -91,8 +91,8 @@ const UserListToolbar = ({ updateView, idInstitute, setIdInstitute, institutions
   };
 
   const handleChangeSelect = (event) => {
-    setIdInstitute(event.target.value.idInstitucion);
-    setInstitutionId(event.target.value.idInstitucion);
+    setInstitutionId(event.target.value);
+    setIdInstitute(event.target.value);
   };
 
   const handleChangeInstitucion = (event) => {
@@ -160,7 +160,7 @@ const UserListToolbar = ({ updateView, idInstitute, setIdInstitute, institutions
                         <em>--Seleccione--</em>
                       </MenuItem>
                       {institutions.map((institute) => (
-                        <MenuItem key={institute.idInstitucion} value={institute}>
+                        <MenuItem key={institute.idInstitucion} value={institute.idInstitucion}>
                           {institute.nombre}
                         </MenuItem>
                       ))}

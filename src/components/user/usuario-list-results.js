@@ -5,7 +5,9 @@ import {
   Button,
   Card,
   Dialog,
+  DialogActions,
   DialogContent,
+  DialogContentText,
   DialogTitle,
   Divider,
   FormControl,
@@ -26,17 +28,20 @@ import {
 } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import apis from "src/utils/bookApis";
-import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import PowerSettingsNewRoundedIcon from "@mui/icons-material/PowerSettingsNewRounded";
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 
 const UserListResults = ({ users, institutions, updateView }) => {
   const [selectedUserIds, setSelectedUserIds] = useState([]);
   const [limit, setLimit] = useState(10);
+  const [estado, setEstado] = useState(false);
   const [idUser, setIdUser] = useState();
   const [page, setPage] = useState(0);
   const [errors, setErrors] = useState({});
   const [idInstitucion, setIdInstitucion] = useState([]);
+  const [openActive, setOpenActive] = useState(false);
+  const [ciUser, setCiUser] = useState("");
   const [usuario, setUsuario] = useState({
     apellido: "",
     email: "",
@@ -86,24 +91,26 @@ const UserListResults = ({ users, institutions, updateView }) => {
     });
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = () => {
     clientPublic
-      .delete(apis.user.delete_id + id)
+      .patch(apis.user.patch_ci + ciUser, null, {
+        params: { estado: estado === "BLO" ? "ACT" : "BLO" },
+      })
       .then((res) => {
-        if (res.status === 200) {
-          msmSwalExito("Usuario eliminado satisfactoriamente");
-          updateView();
+        if (res.status >= 200 && res.status < 300) {
+          msmSwalExito("Estado del usuario modificado satisfactoriamente");
         }
       })
       .catch((exception) => {
         if (exception.response) {
-          if (exception.response.status === 400) {
-            msmSwalError("No se pudo eliminar el usuario");
+          if (exception.response.status >= 400 && exception.response.status < 500) {
+            msmSwalError("No se pudo modificar el estado del usuario");
           }
         } else {
           msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
         }
       });
+    updateView();
   };
 
   const handlePageChange = (event, newPage) => {
@@ -135,6 +142,16 @@ const UserListResults = ({ users, institutions, updateView }) => {
     });
   };
 
+  const handleActive = (data) => {
+    setOpenActive(true);
+    setEstado(data.estadoUsuario);
+    setCiUser(data.identification);
+  };
+
+  const handleCloseActive = () => {
+    setOpenActive(false);
+  };
+
   return (
     <>
       <Card>
@@ -149,7 +166,8 @@ const UserListResults = ({ users, institutions, updateView }) => {
                     <TableCell>Cedula</TableCell>
                     <TableCell>Correo</TableCell>
                     <TableCell>Teléfono</TableCell>
-                    <TableCell>Opción</TableCell>
+                    <TableCell>Editar</TableCell>
+                    <TableCell>Estado</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -168,8 +186,25 @@ const UserListResults = ({ users, institutions, updateView }) => {
                         <IconButton color="default" onClick={() => handleEdit({ ...user })}>
                           <EditRoundedIcon></EditRoundedIcon>
                         </IconButton>
-                        <IconButton color="default" onClick={() => handleDelete(user.id)}>
-                          <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          style={{
+                            color:
+                              user.estadoUsuario === "PRI" || user.estadoUsuario === "ACT"
+                                ? "green"
+                                : "red",
+                            fontSize: 13,
+                          }}
+                          color="default"
+                          onClick={() => handleActive({ ...user })}
+                        >
+                          <PowerSettingsNewRoundedIcon></PowerSettingsNewRoundedIcon>
+                          <p>
+                            {user.estadoUsuario === "PRI" || user.estadoUsuario === "ACT"
+                              ? "Activo"
+                              : "Inactivo"}
+                          </p>
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -320,6 +355,28 @@ const UserListResults = ({ users, institutions, updateView }) => {
             </Grid>
           </form>
         </DialogContent>
+      </Dialog>
+      {/*Mesanje de confirmación*/}
+      <Dialog
+        open={openActive}
+        onClose={handleCloseActive}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">¿Estas Seguro/a?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {estado === "BLO"
+              ? "¿Está seguro/a de querer activar este usuario?"
+              : "¿Está seguro/a de querer desactivar esta usuario?, este usuario no podra ingresar al sistema"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDelete} autoFocus>
+            Si
+          </Button>
+          <Button onClick={handleCloseActive}>No</Button>
+        </DialogActions>
       </Dialog>
     </>
   );

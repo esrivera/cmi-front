@@ -5,15 +5,11 @@ import PropTypes from "prop-types";
 import { Box, Divider, Drawer, Typography, useMediaQuery } from "@mui/material";
 import { ChartBar as ChartBarIcon } from "../icons/chart-bar";
 import { User as UserIcon } from "../icons/user";
-import { Users as UsersIcon } from "../icons/users";
-import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
-import EmojiObjectsRoundedIcon from "@mui/icons-material/EmojiObjectsRounded";
-import AttractionsRoundedIcon from "@mui/icons-material/AttractionsRounded";
 import EngineeringRoundedIcon from "@mui/icons-material/EngineeringRounded";
+import AddAlertRoundedIcon from "@mui/icons-material/AddAlertRounded";
 import ManageSearchRoundedIcon from "@mui/icons-material/ManageSearchRounded";
 import { Logo } from "./logo";
 import { NavItem } from "./nav-item";
-import { NoEncryption } from "@mui/icons-material";
 
 const items = [
   {
@@ -26,11 +22,21 @@ const items = [
     icon: <EngineeringRoundedIcon fontSize="small" />,
     title: "Gestión CMI",
   },
-  // {
-  //   href: "/estadistica",
-  //   icon: <ChartBarIcon fontSize="small" />,
-  //   title: "Estadísticas",
-  // },
+  {
+    href: "/cmi/visualizar",
+    icon: <ManageSearchRoundedIcon fontSize="small" />,
+    title: "Visualización CMI",
+  },
+  {
+    href: "/alerta",
+    icon: <AddAlertRoundedIcon fontSize="small" />,
+    title: "Alertas",
+  },
+  {
+    href: "/estadistica/reporte",
+    icon: <ChartBarIcon fontSize="small" />,
+    title: "Estadísticas",
+  },
 ];
 
 export const DashboardSidebarUser = (props) => {
@@ -66,7 +72,7 @@ export const DashboardSidebarUser = (props) => {
       >
         <div>
           <Box sx={{ p: 3 }}>
-            <NextLink href="/inicio" passHref>
+            <NextLink href="/inicio/home" passHref>
               <a>
                 <Logo
                   sx={{
