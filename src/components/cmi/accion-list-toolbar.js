@@ -23,21 +23,18 @@ const CmiListToolbar = ({
   idObjetive,
   setIdObjetive,
   objetives,
-  institution,
-  idInstitucion,
-  setIdInstitucion,
+  wordSearch,
+  setWordSearch,
 }) => {
   const [objetiveId, setObjetiveId] = useState([]);
-  const [institucionId, setInstitucionId] = useState([]);
 
   const handleChangeSelect = (event) => {
     setObjetiveId(event.target.value);
     setIdObjetive(event.target.value);
   };
 
-  const changeSelectInstitution = (event) => {
-    setInstitucionId(event.target.value);
-    setIdInstitucion(event.target.value);
+  const handleChangeWord = (event) => {
+    setWordSearch(event.target.value);
   };
 
   return (
@@ -69,6 +66,10 @@ const CmiListToolbar = ({
                   <Box sx={{ maxWidth: 300 }}>
                     <TextField
                       fullWidth
+                      name="wordSearch"
+                      value={wordSearch}
+                      onChange={handleChangeWord}
+                      autoFocus
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -101,27 +102,6 @@ const CmiListToolbar = ({
                       {objetives.map((objetivo) => (
                         <MenuItem key={objetivo.id} value={objetivo.id}>
                           {objetivo.nombre}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={4}>
-                  <FormControl sx={{ width: 300 }}>
-                    <InputLabel id="demo-simple-select-autowidth-label">Institución</InputLabel>
-                    <Select
-                      value={institucionId}
-                      onChange={changeSelectInstitution}
-                      id="demo-simple-select-autowidth"
-                      labelId="demo-simple-select-autowidth-label"
-                      label="Institución"
-                    >
-                      <MenuItem disabled value="">
-                        <em>--Seleccione--</em>
-                      </MenuItem>
-                      {institution.map((institute) => (
-                        <MenuItem key={institute.idInstitucion} value={institute.idInstitucion}>
-                          {institute.nombre}
                         </MenuItem>
                       ))}
                     </Select>

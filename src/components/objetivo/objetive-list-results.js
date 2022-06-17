@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import PropTypes from "prop-types";
 import {
   Box,
   Button,
@@ -27,12 +26,13 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 
-const ObjetiveListResults = ({ objetives, updateView }) => {
+const ObjetiveListResults = ({ objetives, updateView, wordSearch }) => {
   const [selectedObjetiveIds, setSelectedObjetiveIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [idObjetivo, setIdObjetivo] = useState("");
   const [page, setPage] = useState(0);
   const [errors, setErrors] = useState({});
+  const [dataSearch, setDataSearch] = useState([]);
   const [objetive, setObjetive] = useState({
     nombre: "",
     descripcion: "",
@@ -106,6 +106,28 @@ const ObjetiveListResults = ({ objetives, updateView }) => {
     setOpen(false);
   };
 
+  useEffect(() => {
+    if (dataSearch) {
+      if (wordSearch.length > 2) {
+        const listData = [];
+        objetives.map((objet) => {
+          objet.nombre.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          objet.descripcion.toUpperCase().includes(wordSearch.toUpperCase())
+            ? listData.push(objet)
+            : "";
+        });
+        setDataSearch(listData);
+      }
+    }
+  }, [wordSearch, dataSearch]);
+
+  let rows = [];
+  if (wordSearch === "" || wordSearch.length < 3) {
+    rows = objetives.slice();
+  } else {
+    rows = dataSearch.slice();
+  }
+
   return (
     <>
       <Card>
@@ -120,7 +142,7 @@ const ObjetiveListResults = ({ objetives, updateView }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {objetives.slice(page * limit, page * limit + limit).map((objetivo) => (
+                {rows.slice(page * limit, page * limit + limit).map((objetivo) => (
                   <TableRow
                     hover
                     key={objetivo.id}
@@ -142,9 +164,11 @@ const ObjetiveListResults = ({ objetives, updateView }) => {
                     <TableCell>
                       <IconButton color="default" onClick={() => handleEdit({ ...objetivo })}>
                         <EditRoundedIcon></EditRoundedIcon>
+                        <p style={{ fontSize: 14 }}>Editar</p>
                       </IconButton>
                       <IconButton color="default" onClick={() => handleDelete(objetivo.id)}>
                         <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
+                        <p style={{ fontSize: 14 }}>Eliminar</p>
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -155,7 +179,7 @@ const ObjetiveListResults = ({ objetives, updateView }) => {
         </PerfectScrollbar>
         <TablePagination
           component="div"
-          count={objetives.length}
+          count={rows.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}

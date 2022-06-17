@@ -23,15 +23,18 @@ const CmiListToolbarUser = ({
   idObjetive,
   setIdObjetive,
   objetives,
-  institution,
-  idInstitucion,
-  setIdInstitucion,
+  wordSearch,
+  setWordSearch,
 }) => {
   const [objetiveId, setObjetiveId] = useState([]);
 
   const handleChangeSelect = (event) => {
     setObjetiveId(event.target.value);
     setIdObjetive(event.target.value);
+  };
+
+  const handleChangeWord = (event) => {
+    setWordSearch(event.target.value);
   };
 
   return (
@@ -63,6 +66,10 @@ const CmiListToolbarUser = ({
                   <Box sx={{ maxWidth: 300 }}>
                     <TextField
                       fullWidth
+                      name="wordSearch"
+                      value={wordSearch}
+                      onChange={handleChangeWord}
+                      autoFocus
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">

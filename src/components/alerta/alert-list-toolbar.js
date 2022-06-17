@@ -52,7 +52,7 @@ function getStyles(name, idInstitutions, theme) {
   };
 }
 
-const AlertListToolbar = ({ updateView }) => {
+const AlertListToolbar = ({ updateView, tipoAlerta, setTipoAlerta, wordSearch, setWordSearch }) => {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [alert, setAlert] = useState({
@@ -176,6 +176,10 @@ const AlertListToolbar = ({ updateView }) => {
     });
   };
 
+  const handleChangeWord = (event) => {
+    setWordSearch(event.target.value);
+  };
+
   const searchInstitution = async () => {
     await clientPublic
       .get(query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort)
@@ -189,6 +193,10 @@ const AlertListToolbar = ({ updateView }) => {
           msmSwalError("Ocurrio un problema en la red al consultar los datos.");
         }
       });
+  };
+
+  const handleChangeRadio = (event) => {
+    setTipoAlerta(event.target.value);
   };
 
   return (
@@ -220,6 +228,9 @@ const AlertListToolbar = ({ updateView }) => {
                   <Box sx={{ maxWidth: 400 }}>
                     <TextField
                       fullWidth
+                      name="wordSearch"
+                      value={wordSearch}
+                      onChange={handleChangeWord}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -231,6 +242,7 @@ const AlertListToolbar = ({ updateView }) => {
                       }}
                       placeholder="Buscar Alerta"
                       variant="outlined"
+                      autoFocus
                     />
                   </Box>
                 </Grid>
@@ -240,6 +252,8 @@ const AlertListToolbar = ({ updateView }) => {
                       row
                       aria-labelledby="demo-row-radio-buttons-group-label"
                       name="row-radio-buttons-group"
+                      value={tipoAlerta}
+                      onChange={handleChangeRadio}
                     >
                       <FormControlLabel value="env" control={<Radio />} label="Enviadas" />
                       <FormControlLabel value="rec" control={<Radio />} label="Recibidas" />

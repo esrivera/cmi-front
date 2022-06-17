@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Box,
@@ -23,14 +23,17 @@ import apis from "src/utils/bookApis";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import CloudDownloadRoundedIcon from "@mui/icons-material/CloudDownloadRounded";
 import { clientPublic } from "src/api/axios";
+import PowerSettingsNewRoundedIcon from "@mui/icons-material/PowerSettingsNewRounded";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 
-const AlertListResults = ({ alerts, updateView }) => {
+const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
   const [limit, setLimit] = useState(10);
   const [selectedAlertsid, setSelectedAlertsId] = useState([]);
   const [page, setPage] = useState(0);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [alertId, setAlertId] = useState("");
+  const [dataSearch, setDataSearch] = useState([]);
 
   const handleLimitChange = (event) => {
     setLimit(+event.target.value);
@@ -57,6 +60,11 @@ const AlertListResults = ({ alerts, updateView }) => {
     setAlertId(id);
   };
 
+  const handleDialog = (id) => {
+    setOpenDialog(true);
+    setAlertId(id);
+  };
+
   const handleDelete = () => {
     clientPublic
       .delete(apis.alerta.delete_id + alertId)
@@ -77,6 +85,28 @@ const AlertListResults = ({ alerts, updateView }) => {
       });
   };
 
+  const handlePatch = () => {
+    clientPublic
+      .patch(apis.alerta.patch_estado + alertId, null, {
+        params: { estadoAlerta: "RECI" },
+      })
+      .then((res) => {
+        if (res.status >= 200 && res.status < 300) {
+          msmSwalExito("Estado de la alerta modificado satisfactoriamente");
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          if (exception.response.status >= 400 && exception.response.status < 500) {
+            msmSwalError("No se pudo cambiar el estado de la alerta");
+          }
+        } else {
+          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
+        }
+      });
+    updateView();
+  };
+
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
@@ -85,71 +115,180 @@ const AlertListResults = ({ alerts, updateView }) => {
     setOpenConfirm(false);
   };
 
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  useEffect(() => {
+    if (dataSearch) {
+      if (wordSearch.length > 2) {
+        const listData = [];
+        alerts.map((alert) => {
+          alert.estadoAlerta.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          wordSearch.toUpperCase().includes(alert.estadoAlerta.toUpperCase()) ||
+          alert.descripcion.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          alert.fechaAlerta.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          wordSearch.toUpperCase().includes(alert.tipoAlerta.toUpperCase()) ||
+          alert.tipoAlerta.toUpperCase().includes(wordSearch.toUpperCase())
+            ? listData.push(alert)
+            : "";
+        });
+        setDataSearch(listData);
+      }
+    }
+  }, [wordSearch, dataSearch]);
+
+  let rows = [];
+  if (wordSearch === "" || wordSearch.length < 3) {
+    rows = alerts.slice();
+  } else {
+    rows = dataSearch.slice();
+  }
+
   return (
     <>
-      <Card>
-        <PerfectScrollbar>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Fecha</TableCell>
-                  <TableCell>Descripción</TableCell>
-                  <TableCell>Tipo</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell>Evidencia</TableCell>
-                  <TableCell>Eliminar</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {alerts.slice(page * limit, page * limit + limit).map((alert) => (
-                  <TableRow
-                    hover
-                    key={alert.idAlerta}
-                    selected={selectedAlertsid.indexOf(alert.idAlerta) !== -1}
-                  >
-                    <TableCell>
-                      <Box
-                        sx={{
-                          alignItems: "center",
-                          display: "flex",
-                        }}
-                      >
-                        <Typography color="textPrimary" variant="body1">
-                          {alert.fechaAlerta}
-                        </Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell>{alert.descripcion}</TableCell>
-                    <TableCell>{alert.tipoAlerta}</TableCell>
-                    <TableCell>{alert.estadoAlerta}</TableCell>
-                    <TableCell>
-                      <IconButton color="default" onClick={() => handleDownload({ ...alert })}>
-                        <CloudDownloadRoundedIcon></CloudDownloadRoundedIcon>
-                        <p style={{ fontSize: 14 }}>Descargar</p>
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton color="default" onClick={() => handleConfirm(alert.idAlerta)}>
-                        <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
-                      </IconButton>
-                    </TableCell>
+      {tipoAlerta === "env" ? (
+        <Card>
+          <PerfectScrollbar>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Fecha</TableCell>
+                    <TableCell>Descripción</TableCell>
+                    <TableCell>Tipo</TableCell>
+                    <TableCell>Estado</TableCell>
+                    <TableCell>Evidencia</TableCell>
+                    <TableCell>Eliminar</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </PerfectScrollbar>
-        <TablePagination
-          component="div"
-          count={alerts.length}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleLimitChange}
-          page={page}
-          rowsPerPage={limit}
-          rowsPerPageOptions={[5, 10, 25]}
-        />
-      </Card>
+                </TableHead>
+                <TableBody>
+                  {rows.slice(page * limit, page * limit + limit).map((alert) => (
+                    <TableRow
+                      hover
+                      key={alert.idAlerta}
+                      selected={selectedAlertsid.indexOf(alert.idAlerta) !== -1}
+                    >
+                      <TableCell>
+                        <Box
+                          sx={{
+                            alignItems: "center",
+                            display: "flex",
+                          }}
+                        >
+                          <Typography color="textPrimary" variant="body1">
+                            {alert.fechaAlerta}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell>{alert.descripcion}</TableCell>
+                      <TableCell>
+                        {alert.tipoAlerta === "SOC" ? "Socioeconómica" : "Delito Hidrocarburífero"}
+                      </TableCell>
+                      <TableCell>
+                        {alert.estadoAlerta === "PEND" ? "Pendiente" : "Recibido"}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton color="default" onClick={() => handleDownload({ ...alert })}>
+                          <CloudDownloadRoundedIcon></CloudDownloadRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Descargar</p>
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        {alert.estadoAlerta === "PEND" ? (
+                          <IconButton color="default" onClick={() => handleConfirm(alert.idAlerta)}>
+                            <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
+                          </IconButton>
+                        ) : null}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </PerfectScrollbar>
+          <TablePagination
+            component="div"
+            count={rows.length}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleLimitChange}
+            page={page}
+            rowsPerPage={limit}
+            rowsPerPageOptions={[5, 10, 25]}
+          />
+        </Card>
+      ) : (
+        <Card>
+          <PerfectScrollbar>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Fecha</TableCell>
+                    <TableCell>Descripción</TableCell>
+                    <TableCell>Tipo</TableCell>
+                    <TableCell>Estado</TableCell>
+                    <TableCell>Evidencia</TableCell>
+                    <TableCell>Opción</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rows.slice(page * limit, page * limit + limit).map((alert) => (
+                    <TableRow
+                      hover
+                      key={alert.idAlerta}
+                      selected={selectedAlertsid.indexOf(alert.idAlerta) !== -1}
+                    >
+                      <TableCell>
+                        <Box
+                          sx={{
+                            alignItems: "center",
+                            display: "flex",
+                          }}
+                        >
+                          <Typography color="textPrimary" variant="body1">
+                            {alert.fechaAlerta}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell>{alert.descripcion}</TableCell>
+                      <TableCell>
+                        {alert.tipoAlerta === "SOC" ? "Socioeconómica" : "Delito Hidrocarburífero"}
+                      </TableCell>
+                      <TableCell>
+                        {alert.estadoAlerta === "PEND" ? "Pendiente" : "Recibido"}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton color="default" onClick={() => handleDownload({ ...alert })}>
+                          <CloudDownloadRoundedIcon></CloudDownloadRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Descargar</p>
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        {alert.estadoAlerta === "PEND" ? (
+                          <IconButton color="default" onClick={() => handleDialog(alert.idAlerta)}>
+                            <PowerSettingsNewRoundedIcon></PowerSettingsNewRoundedIcon>
+                            <p style={{ fontSize: 14 }}>{"Recibido"}</p>
+                          </IconButton>
+                        ) : null}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </PerfectScrollbar>
+          <TablePagination
+            component="div"
+            count={rows.length}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleLimitChange}
+            page={page}
+            rowsPerPage={limit}
+            rowsPerPageOptions={[5, 10, 25]}
+          />
+        </Card>
+      )}
       {/*Mesanje de confirmación*/}
       <Dialog
         open={openConfirm}
@@ -169,6 +308,27 @@ const AlertListResults = ({ alerts, updateView }) => {
             Si
           </Button>
           <Button onClick={handleCloseConfirm}>No</Button>
+        </DialogActions>
+      </Dialog>
+      {/*Mesanje de confirmación Patch*/}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">¿Estas Seguro/a?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            ¿Está seguro/a de querer confirmar la recepción de esta alerta?, no se podra modificar
+            el estado de la alerta cuando se cambie.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handlePatch} autoFocus>
+            Si
+          </Button>
+          <Button onClick={handleCloseDialog}>No</Button>
         </DialogActions>
       </Dialog>
     </>

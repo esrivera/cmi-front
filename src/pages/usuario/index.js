@@ -13,6 +13,7 @@ const Usuario = () => {
   const [user, setUser] = useState([]);
   const [institution, setInstitution] = useState([]);
   const [idInstitution, setIdInstitution] = useState(1);
+  const [wordSearch, setWordSearch] = useState("");
   const query = {
     uri: apis.user.get_all + idInstitution,
     metodo: "get",
@@ -80,9 +81,16 @@ const Usuario = () => {
                   idInstitute={idInstitution}
                   setIdInstitute={setIdInstitution}
                   institutions={institution}
+                  wordSearch={wordSearch}
+                  setWordSearch={setWordSearch}
                 ></UserListToolbar>
                 <Box sx={{ mt: 3 }}>
-                  <UserListResults users={user} institutions={institution} updateView={reload} />
+                  <UserListResults
+                    users={user}
+                    institutions={institution}
+                    updateView={reload}
+                    wordSearch={wordSearch}
+                  />
                 </Box>
               </Container>
             </Box>

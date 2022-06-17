@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Box,
@@ -32,7 +32,7 @@ import PowerSettingsNewRoundedIcon from "@mui/icons-material/PowerSettingsNewRou
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 
-const UserListResults = ({ users, institutions, updateView }) => {
+const UserListResults = ({ users, institutions, updateView, wordSearch }) => {
   const [selectedUserIds, setSelectedUserIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [estado, setEstado] = useState(false);
@@ -42,6 +42,7 @@ const UserListResults = ({ users, institutions, updateView }) => {
   const [idInstitucion, setIdInstitucion] = useState([]);
   const [openActive, setOpenActive] = useState(false);
   const [ciUser, setCiUser] = useState("");
+  const [dataSearch, setDataSearch] = useState([]);
   const [usuario, setUsuario] = useState({
     apellido: "",
     email: "",
@@ -152,6 +153,30 @@ const UserListResults = ({ users, institutions, updateView }) => {
     setOpenActive(false);
   };
 
+  useEffect(() => {
+    if (dataSearch) {
+      if (wordSearch.length > 2) {
+        const listData = [];
+        users.map((user) => {
+          user.name.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          user.lastname.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          user.identification.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          user.email.toUpperCase().includes(wordSearch.toUpperCase())
+            ? listData.push(user)
+            : "";
+        });
+        setDataSearch(listData);
+      }
+    }
+  }, [wordSearch, dataSearch]);
+
+  let rows = [];
+  if (wordSearch === "" || wordSearch.length < 3) {
+    rows = users.slice();
+  } else {
+    rows = dataSearch.slice();
+  }
+
   return (
     <>
       <Card>
@@ -171,7 +196,7 @@ const UserListResults = ({ users, institutions, updateView }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {users.slice(page * limit, page * limit + limit).map((user) => (
+                  {rows.slice(page * limit, page * limit + limit).map((user) => (
                     <TableRow
                       hover
                       key={user.id}
@@ -216,7 +241,7 @@ const UserListResults = ({ users, institutions, updateView }) => {
         </PerfectScrollbar>
         <TablePagination
           component="div"
-          count={users.length}
+          count={rows.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}

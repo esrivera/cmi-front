@@ -42,7 +42,7 @@ import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 import { validationActivity, validationMeta } from "src/utils/validationInputs";
 import { parseJwt } from "src/utils/userAction";
 
-const CmiListResultsUser = ({ actions, updateView, objetives }) => {
+const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
   const [selectedActionIds, setSelectedActionIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -61,7 +61,6 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
   const [openEvidencia, setOpenEvidencia] = useState(false);
   const [openList, setOpenList] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const [openObservacion, setOpenObservacion] = useState(false);
   const [formula, setFormula] = useState({});
   const [porcentajeAvance, setPorcentajeAvance] = useState("");
   const [descripcionActMeta, setDescripcionActMeta] = useState("");
@@ -75,6 +74,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
   const [openActive, setOpenActive] = useState(false);
   const [openFormula, setOpenFormula] = useState(false);
   const [openDescripcion, setOpenDescripcion] = useState(false);
+  const [dataSearch, setDataSearch] = useState([]);
   const query = {
     uri: apis.meta.get_all_indicador,
     metodo: "get",
@@ -202,15 +202,6 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
     setAnioPlanificado("");
     setPorcentajePlanificado("");
     setEvidencias([]);
-  };
-
-  const handleCloseObservacion = () => {
-    setOpenObservacion(false);
-  };
-
-  const handleObservacion = (data) => {
-    setOpenObservacion(true);
-    setObservacion(data.indicador[0].observaciones);
   };
 
   useEffect(() => {
@@ -367,6 +358,31 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
     setOpenEvidencia(false);
   };
 
+  useEffect(() => {
+    if (dataSearch) {
+      if (wordSearch.length > 2) {
+        const listData = [];
+        actions.map((action) => {
+          action.indicador[0].nombre.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.institucion.siglas.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.institucion.nombre.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.perioricidadReporte.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.identificador.toUpperCase().includes(wordSearch.toUpperCase())
+            ? listData.push(action)
+            : "";
+        });
+        setDataSearch(listData);
+      }
+    }
+  }, [wordSearch, dataSearch]);
+
+  let rows = [];
+  if (wordSearch === "" || wordSearch.length < 3) {
+    rows = actions.slice();
+  } else {
+    rows = dataSearch.slice();
+  }
+
   return (
     <>
       <Card>
@@ -390,7 +406,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {actions.slice(page * limit, page * limit + limit).map((accion) => (
+                  {rows.slice(page * limit, page * limit + limit).map((accion) => (
                     <TableRow
                       hover
                       key={accion.id}
@@ -456,14 +472,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
                       <TableCell>
                         <IconButton color="default" onClick={() => handleEdit({ ...accion })}>
                           <EditRoundedIcon></EditRoundedIcon>
-                          <p style={{ fontSize: 14 }}>Editar</p>
-                        </IconButton>
-                        <IconButton
-                          color="default"
-                          onClick={() => handleObservacion({ ...accion })}
-                        >
-                          <InfoRoundedIcon></InfoRoundedIcon>
-                          <p style={{ fontSize: 14 }}>Ver</p>
+                          <p style={{ fontSize: 14 }}>Revisar</p>
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -475,7 +484,7 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
         </PerfectScrollbar>
         <TablePagination
           component="div"
-          count={actions.length}
+          count={rows.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}
@@ -711,23 +720,6 @@ const CmiListResultsUser = ({ actions, updateView, objetives }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseList}>Cerrar</Button>
-        </DialogActions>
-      </Dialog>
-      {/* Información de las Observaciones */}
-      <Dialog
-        open={openObservacion}
-        onClose={handleCloseObservacion}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Observaciones</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            <text>{observacion != null ? observacion : "No se han registrado observaciones"}</text>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseObservacion}>Cerrar</Button>
         </DialogActions>
       </Dialog>
       {/* Lista de metas por año con evidencia */}

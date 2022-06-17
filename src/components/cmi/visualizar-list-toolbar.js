@@ -18,12 +18,23 @@ import React, { useState } from "react";
 import { Search as SearchIcon } from "../../icons/search";
 import KeyboardReturnRoundedIcon from "@mui/icons-material/KeyboardReturnRounded";
 
-const VisualizarListToolbar = ({ updateView, idObjetive, setIdObjetive, objetives }) => {
+const VisualizarListToolbar = ({
+  updateView,
+  idObjetive,
+  setIdObjetive,
+  objetives,
+  wordSearch,
+  setWordSearch,
+}) => {
   const [objetiveId, setObjetiveId] = useState([]);
 
   const handleChangeSelect = (event) => {
     setObjetiveId(event.target.value);
     setIdObjetive(event.target.value);
+  };
+
+  const handleChangeWord = (event) => {
+    setWordSearch(event.target.value);
   };
 
   return (
@@ -39,7 +50,7 @@ const VisualizarListToolbar = ({ updateView, idObjetive, setIdObjetive, objetive
           }}
         >
           <Typography sx={{ m: 1 }} variant="h4">
-            Gestión CMI
+            Visualización CMI
           </Typography>
           <Link href="/inicio/home">
             <Button variant="outlined" sx={{ m: 4 }}>
@@ -55,6 +66,10 @@ const VisualizarListToolbar = ({ updateView, idObjetive, setIdObjetive, objetive
                   <Box sx={{ maxWidth: 300 }}>
                     <TextField
                       fullWidth
+                      name="wordSearch"
+                      value={wordSearch}
+                      onChange={handleChangeWord}
+                      autoFocus
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">

@@ -11,6 +11,7 @@ import ObjetiveListToolbar from "src/components/objetivo/objetive-list-toolbar";
 const Objetivo = () => {
   const [update, setUpdate] = useState(0);
   const [objetive, setObjetive] = useState([]);
+  const [wordSearch, setWordSearch] = useState("");
   const query = {
     uri: apis.objetive.get_all,
     metodo: "get",
@@ -53,9 +54,17 @@ const Objetivo = () => {
               }}
             >
               <Container maxWidth={false}>
-                <ObjetiveListToolbar updateView={reload}></ObjetiveListToolbar>
+                <ObjetiveListToolbar
+                  updateView={reload}
+                  wordSearch={wordSearch}
+                  setWordSearch={setWordSearch}
+                ></ObjetiveListToolbar>
                 <Box sx={{ mt: 3 }}>
-                  <ObjetiveListResults objetives={objetive} updateView={reload} />
+                  <ObjetiveListResults
+                    objetives={objetive}
+                    updateView={reload}
+                    wordSearch={wordSearch}
+                  />
                 </Box>
               </Container>
             </Box>

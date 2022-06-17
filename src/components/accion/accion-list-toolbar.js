@@ -23,7 +23,14 @@ import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 import apis from "src/utils/bookApis";
 import { Search as SearchIcon } from "../../icons/search";
 
-const ActionListToolbar = ({ updateView, idObjetive, setIdObjetive, objetives }) => {
+const ActionListToolbar = ({
+  updateView,
+  idObjetive,
+  setIdObjetive,
+  objetives,
+  wordSearch,
+  setWordSearch,
+}) => {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [objetiveId, setObjetiveId] = useState([]);
@@ -147,11 +154,14 @@ const ActionListToolbar = ({ updateView, idObjetive, setIdObjetive, objetives })
 
   const handleChangePeriodo = (event) => {
     setPeriodicidad(event.target.value);
-    console.log(event.target.value);
     setAccion({
       ...accion,
       perioricidadReporte: event.target.value,
     });
+  };
+
+  const handleChangeWord = (event) => {
+    setWordSearch(event.target.value);
   };
 
   return (
@@ -175,7 +185,7 @@ const ActionListToolbar = ({ updateView, idObjetive, setIdObjetive, objetives })
             </Button>
           </Box>
         </Box>
-        <Box sx={{ mt: 3, flexWrap: "wrap"}}>
+        <Box sx={{ mt: 3, flexWrap: "wrap" }}>
           <Card>
             <CardContent>
               <Grid container spacing={2}>
@@ -183,6 +193,10 @@ const ActionListToolbar = ({ updateView, idObjetive, setIdObjetive, objetives })
                   <Box sx={{ width: 300 }}>
                     <TextField
                       fullWidth
+                      name="wordSearch"
+                      value={wordSearch}
+                      onChange={handleChangeWord}
+                      autoFocus
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">

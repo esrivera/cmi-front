@@ -8,14 +8,10 @@ import {
   SvgIcon,
   Typography,
   Grid,
-  Alert,
   DialogContent,
   DialogTitle,
   Dialog,
   Divider,
-  Backdrop,
-  CircularProgress,
-  Snackbar,
 } from "@mui/material";
 import React, { useState } from "react";
 import { clientPublic } from "src/api/axios";
@@ -23,7 +19,7 @@ import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 import apis from "src/utils/bookApis";
 import { Search as SearchIcon } from "../../icons/search";
 
-const ObjetiveListToolbar = ({ updateView }) => {
+const ObjetiveListToolbar = ({ updateView, wordSearch, setWordSearch }) => {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [objetive, setObjetive] = useState({
@@ -68,6 +64,10 @@ const ObjetiveListToolbar = ({ updateView }) => {
     });
   };
 
+  const handleChangeWord = (event) => {
+    setWordSearch(event.target.value);
+  };
+
   return (
     <>
       <Box>
@@ -95,6 +95,10 @@ const ObjetiveListToolbar = ({ updateView }) => {
               <Box sx={{ maxWidth: 500 }}>
                 <TextField
                   fullWidth
+                  name="wordSearch"
+                  value={wordSearch}
+                  onChange={handleChangeWord}
+                  autoFocus
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">

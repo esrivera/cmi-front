@@ -12,6 +12,7 @@ const Visualizar = () => {
   const [objetive, setObjetive] = useState([]);
   const [action, setAction] = useState([]);
   const [idObjetivo, setIdObjetivo] = useState(90);
+  const [wordSearch, setWordSearch] = useState("");
 
   const query = {
     uri: apis.accion.get_id_objetive + idObjetivo,
@@ -78,13 +79,11 @@ const Visualizar = () => {
                   idObjetive={idObjetivo}
                   setIdObjetive={setIdObjetivo}
                   objetives={objetive}
+                  wordSearch={wordSearch}
+                  setWordSearch={setWordSearch}
                 ></VisualizarListToolbar>
                 <Box sx={{ mt: 3 }}>
-                  <VisualizarListResults
-                    actions={action}
-                    updateView={reload}
-                    objetives={objetive}
-                  />
+                  <VisualizarListResults actions={action} wordSearch={wordSearch} />
                 </Box>
               </Container>
             </Box>

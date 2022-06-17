@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import PropTypes from "prop-types";
 import { format } from "date-fns";
@@ -28,7 +28,7 @@ import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito } from "src/theme/theme";
 import { palette } from "src/theme/theme";
 
-const InstitutionListResults = ({ customers, updateView }) => {
+const InstitutionListResults = ({ institutions, updateView, wordSearch }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [errors, setErrors] = useState({});
@@ -36,6 +36,7 @@ const InstitutionListResults = ({ customers, updateView }) => {
   const [page, setPage] = useState(0);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [institucion, setInstitucion] = useState({});
+  const [dataSearch, setDataSearch] = useState([]);
 
   const handleLimitChange = (event) => {
     setLimit(+event.target.value);
@@ -103,6 +104,29 @@ const InstitutionListResults = ({ customers, updateView }) => {
     setPage(newPage);
   };
 
+  useEffect(() => {
+    if (dataSearch) {
+      if (wordSearch.length > 2) {
+        const listData = [];
+        institutions.map((institution) => {
+          institution.nombre.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          institution.siglas.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          institution.correo.toUpperCase().includes(wordSearch.toUpperCase())
+            ? listData.push(institution)
+            : "";
+        });
+        setDataSearch(listData);
+      }
+    }
+  }, [wordSearch, dataSearch]);
+
+  let rows = [];
+  if (wordSearch === "" || wordSearch.length < 3) {
+    rows = institutions.slice();
+  } else {
+    rows = dataSearch.slice();
+  }
+
   return (
     <>
       <Card style={{ overflowX: "scroll", width: "100%" }}>
@@ -119,11 +143,11 @@ const InstitutionListResults = ({ customers, updateView }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(page * limit, page * limit + limit).map((customer) => (
+              {rows.slice(page * limit, page * limit + limit).map((institution) => (
                 <TableRow
                   hover
-                  key={customer.idInstitucion}
-                  selected={selectedCustomerIds.indexOf(customer.idInstitucion) !== -1}
+                  key={institution.idInstitucion}
+                  selected={selectedCustomerIds.indexOf(institution.idInstitucion) !== -1}
                 >
                   <TableCell>
                     <Box
@@ -133,23 +157,25 @@ const InstitutionListResults = ({ customers, updateView }) => {
                       }}
                     >
                       <Typography color="textPrimary" variant="body1">
-                        {customer.nombre}
+                        {institution.nombre}
                       </Typography>
                     </Box>
                   </TableCell>
-                  <TableCell>{customer.siglas}</TableCell>
-                  <TableCell>{customer.correo}</TableCell>
-                  <TableCell>{customer.direccion}</TableCell>
-                  <TableCell>{customer.telefono}</TableCell>
+                  <TableCell>{institution.siglas}</TableCell>
+                  <TableCell>{institution.correo}</TableCell>
+                  <TableCell>{institution.direccion}</TableCell>
+                  <TableCell>{institution.telefono}</TableCell>
                   <TableCell>
-                    <IconButton color="default" onClick={() => handleEdit({ ...customer })}>
+                    <IconButton color="default" onClick={() => handleEdit({ ...institution })}>
                       <EditRoundedIcon></EditRoundedIcon>
+                      <p style={{ fontSize: 14 }}>Editar</p>
                     </IconButton>
                     <IconButton
                       color="default"
-                      onClick={() => handleDelete(customer.idInstitucion)}
+                      onClick={() => handleDelete(institution.idInstitucion)}
                     >
                       <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
+                      <p style={{ fontSize: 14 }}>Eliminar</p>
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -159,7 +185,7 @@ const InstitutionListResults = ({ customers, updateView }) => {
         </PerfectScrollbar>
         <TablePagination
           component="div"
-          count={customers.length}
+          count={rows.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}

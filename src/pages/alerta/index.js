@@ -7,19 +7,28 @@ import { msmSwalError } from "src/theme/theme";
 import { DashboardLayoutUser } from "src/components/dashboard-layout-user";
 import AlertListToolbar from "src/components/alerta/alert-list-toolbar";
 import AlertListResults from "src/components/alerta/alert-list-results";
-import { set } from "nprogress";
 import { parseJwt } from "src/utils/userAction";
 
 const Alerta = () => {
   const [update, setUpdate] = useState(0);
   const [alerts, setAlerts] = useState([]);
+  const [tipoAlerta, setTipoAlerta] = useState("env");
+  const [wordSearch, setWordSearch] = useState("");
   const query = {
     uri: apis.alerta.get_by_emisor,
     metodo: "get",
     body: null,
     page: 0,
     elementos: 15,
-    sort: "fechaCreacion,asc",
+    sort: "fechaAlerta,asc",
+  };
+  const query2 = {
+    uri: apis.alerta.get_by_receptor,
+    metodo: "get",
+    body: null,
+    page: 0,
+    elementos: 15,
+    sort: "fechaAlerta,asc",
   };
 
   const reload = () => {
@@ -34,9 +43,13 @@ const Alerta = () => {
     }
   }, [update]);
 
+  useEffect(() => {
+    reload();
+  }, [tipoAlerta, setTipoAlerta]);
+
   const RenderData = () => {
     if (update === 0) {
-      searchAlerts();
+      tipoAlerta === "env" ? searchAlerts() : searchAlerts2();
     }
     switch (update) {
       case 0:
@@ -55,9 +68,20 @@ const Alerta = () => {
               }}
             >
               <Container maxWidth={false}>
-                <AlertListToolbar updateView={reload}></AlertListToolbar>
+                <AlertListToolbar
+                  updateView={reload}
+                  tipoAlerta={tipoAlerta}
+                  setTipoAlerta={setTipoAlerta}
+                  wordSearch={wordSearch}
+                  setWordSearch={setWordSearch}
+                ></AlertListToolbar>
                 <Box sx={{ mt: 3 }}>
-                  <AlertListResults alerts={alerts} updateView={reload} />
+                  <AlertListResults
+                    alerts={alerts}
+                    tipoAlerta={tipoAlerta}
+                    updateView={reload}
+                    wordSearch={wordSearch}
+                  />
                 </Box>
               </Container>
             </Box>
@@ -83,6 +107,38 @@ const Alerta = () => {
     clientPublic
       .get(
         query.uri + id + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort
+      )
+      .then((result) => {
+        if (result.status === 200) {
+          setAlerts(result.data.content);
+          setUpdate(2);
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+        }
+      });
+  };
+
+  const searchAlerts2 = () => {
+    setUpdate(3);
+    const ISSERVER = typeof window === "undefined";
+    const id = "";
+    if (!ISSERVER) {
+      const token = localStorage.getItem("token");
+      id = parseJwt(token).instituteId;
+    }
+    clientPublic
+      .get(
+        query2.uri +
+          id +
+          "?page=" +
+          query2.page +
+          "&size=" +
+          query2.elementos +
+          "&sort=" +
+          query2.sort
       )
       .then((result) => {
         if (result.status === 200) {

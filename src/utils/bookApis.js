@@ -56,8 +56,8 @@ export default {
     post_add: "/alertas",
     delete_id: "/alertas/",
     get_by_emisor: "/alertas/byInstitucionEmi/",
-    get_by_receptor: "/alertas/byInstitucionRecep/{idInstitucionRecep}",
+    get_by_receptor: "/alertas/byInstitucionRecep/",
     get_evidencia: "/alertas/evidencia/",
-    patch_estado: "/alertas/{idAlerta}",
+    patch_estado: "/alertas/",
   },
 };

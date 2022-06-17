@@ -11,6 +11,7 @@ import { msmSwalError } from "src/theme/theme";
 const Institucion = () => {
   const [update, setUpdate] = useState(0);
   const [institution, setInstitution] = useState([]);
+  const [wordSearch, setWordSearch] = useState("");
   const query = {
     uri: apis.institution.get_all,
     metodo: "get",
@@ -53,9 +54,17 @@ const Institucion = () => {
               }}
             >
               <Container maxWidth={false}>
-                <InstitutionListToolbar updateView={reload}></InstitutionListToolbar>
+                <InstitutionListToolbar
+                  updateView={reload}
+                  wordSearch={wordSearch}
+                  setWordSearch={setWordSearch}
+                ></InstitutionListToolbar>
                 <Box sx={{ mt: 3 }}>
-                  <InstitutionListResults customers={institution} updateView={reload} />
+                  <InstitutionListResults
+                    institutions={institution}
+                    updateView={reload}
+                    wordSearch={wordSearch}
+                  />
                 </Box>
               </Container>
             </Box>

@@ -41,7 +41,7 @@ import ThumbUpRoundedIcon from "@mui/icons-material/ThumbUpRounded";
 import ThumbDownAltRoundedIcon from "@mui/icons-material/ThumbDownAltRounded";
 import { validationMeta } from "src/utils/validationInputs";
 
-const CmiListResults = ({ actions, updateView, objetives }) => {
+const CmiListResults = ({ actions, updateView, wordSearch }) => {
   const [selectedActionIds, setSelectedActionIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -53,6 +53,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
   const [porcentajePlanificado, setPorcentajePlanificado] = useState("");
   const [evidencias, setEvidencias] = useState([]);
   const [idMeta, setIdMeta] = useState(0);
+  const [dataSearch, setDataSearch] = useState([]);
   const [meta, setMeta] = useState({
     anioPlanificado: 2021,
     idIndicador: 0,
@@ -63,7 +64,6 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
   const [open, setOpen] = useState(false);
   const [openEvidencia, setOpenEvidencia] = useState(false);
   const [openList, setOpenList] = useState(false);
-  const [openObservacion, setOpenObservacion] = useState(false);
   const [formula, setFormula] = useState({});
   const [openActive, setOpenActive] = useState(false);
   const [openFormula, setOpenFormula] = useState(false);
@@ -168,15 +168,6 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
     setAnioPlanificado("");
     setPorcentajePlanificado("");
     setEvidencias([]);
-  };
-
-  const handleCloseObservacion = () => {
-    setOpenObservacion(false);
-  };
-
-  const handleObservacion = (data) => {
-    setOpenObservacion(true);
-    setObservacion(data.indicador[0].observaciones);
   };
 
   const handleActive = (data) => {
@@ -356,6 +347,31 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
     updateView();
   };
 
+  useEffect(() => {
+    if (dataSearch) {
+      if (wordSearch.length > 2) {
+        const listData = [];
+        actions.map((action) => {
+          action.indicador[0].nombre.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.institucion.siglas.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.institucion.nombre.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.perioricidadReporte.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.identificador.toUpperCase().includes(wordSearch.toUpperCase())
+            ? listData.push(action)
+            : "";
+        });
+        setDataSearch(listData);
+      }
+    }
+  }, [wordSearch, dataSearch]);
+
+  let rows = [];
+  if (wordSearch === "" || wordSearch.length < 3) {
+    rows = actions.slice();
+  } else {
+    rows = dataSearch.slice();
+  }
+
   return (
     <>
       <Card>
@@ -379,7 +395,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {actions.slice(page * limit, page * limit + limit).map((accion) => (
+                  {rows.slice(page * limit, page * limit + limit).map((accion) => (
                     <TableRow
                       hover
                       key={accion.id}
@@ -452,14 +468,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                       <TableCell>
                         <IconButton color="default" onClick={() => handleEdit({ ...accion })}>
                           <EditRoundedIcon></EditRoundedIcon>
-                          <p style={{ fontSize: 14 }}>Editar</p>
-                        </IconButton>
-                        <IconButton
-                          color="default"
-                          onClick={() => handleObservacion({ ...accion })}
-                        >
-                          <InfoRoundedIcon></InfoRoundedIcon>
-                          <p style={{ fontSize: 14 }}>Ver</p>
+                          <p style={{ fontSize: 14 }}>Revisar</p>
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -471,7 +480,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
         </PerfectScrollbar>
         <TablePagination
           component="div"
-          count={actions.length}
+          count={rows.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}
@@ -673,23 +682,6 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
           <Button onClick={handleCloseList}>Cerrar</Button>
         </DialogActions>
       </Dialog>
-      {/* Información de las Observaciones */}
-      <Dialog
-        open={openObservacion}
-        onClose={handleCloseObservacion}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Observaciones</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            <text>{observacion != null ? observacion : "No se han registrado observaciones"}</text>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseObservacion}>Cerrar</Button>
-        </DialogActions>
-      </Dialog>
       {/* Lista de metas por año con evidencia */}
       <Dialog
         open={openEvidencia}
@@ -726,16 +718,16 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
               <Table sx={{ minWidth: 300 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="rigth">Año</TableCell>
+                    <TableCell align="right">Año</TableCell>
                     <TableCell align="right" width={120}>
                       Fecha
                     </TableCell>
-                    <TableCell align="rigth">Acciones o Porcentaje Planificado</TableCell>
-                    <TableCell align="rigth">Acciones o Porcentaje Realizado</TableCell>
-                    <TableCell align="rigth">Observación</TableCell>
-                    <TableCell align="rigth">Estado</TableCell>
-                    <TableCell aling="rigth">Acción</TableCell>
-                    <TableCell align="rigth">Evidencia</TableCell>
+                    <TableCell align="right">Acciones o Porcentaje Planificado</TableCell>
+                    <TableCell align="right">Acciones o Porcentaje Realizado</TableCell>
+                    <TableCell align="right">Observación</TableCell>
+                    <TableCell align="right">Estado</TableCell>
+                    <TableCell aling="right">Acción</TableCell>
+                    <TableCell align="right">Evidencia</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -750,11 +742,11 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                       <TableCell align="right" width={120}>
                         {row.fecha}
                       </TableCell>
-                      <TableCell align="rigth">{porcentajePlanificado}</TableCell>
-                      <TableCell align="rigth">{row.porcentajeAvance}</TableCell>
-                      <TableCell align="rigth">{row.descripcionActMeta}</TableCell>
-                      <TableCell align="rigth">{row.estadoAprobacion}</TableCell>
-                      <TableCell align="rigth">
+                      <TableCell align="right">{porcentajePlanificado}</TableCell>
+                      <TableCell align="right">{row.porcentajeAvance}</TableCell>
+                      <TableCell align="right">{row.descripcionActMeta}</TableCell>
+                      <TableCell align="right">{row.estadoAprobacion}</TableCell>
+                      <TableCell align="right">
                         {row.estadoAprobacion === "PENDIENTE" ? (
                           <>
                             <IconButton
@@ -776,7 +768,7 @@ const CmiListResults = ({ actions, updateView, objetives }) => {
                           </>
                         ) : null}
                       </TableCell>
-                      <TableCell align="rigth">
+                      <TableCell align="right">
                         <IconButton color="default" onClick={() => handleDownload({ ...row })}>
                           <CloudDownloadRoundedIcon></CloudDownloadRoundedIcon>
                         </IconButton>

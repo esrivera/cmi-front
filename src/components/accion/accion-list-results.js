@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
   Box,
@@ -36,7 +36,7 @@ import PowerSettingsNewRoundedIcon from "@mui/icons-material/PowerSettingsNewRou
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 
-const ActionListResults = ({ actions, updateView, objetives }) => {
+const ActionListResults = ({ actions, updateView, objetives, wordSearch }) => {
   const [selectedActionIds, setSelectedActionIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -52,6 +52,7 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
   const [periodicidad, setPeriodicidad] = useState([]);
   const [metas, setMetas] = useState([]);
   const [errors, setErrors] = useState({});
+  const [dataSearch, setDataSearch] = useState([]);
   const [accion, setAccion] = useState({
     descDenominador: "",
     descNumerador: "",
@@ -300,6 +301,31 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
     setOpenActive(false);
   };
 
+  useEffect(() => {
+    if (dataSearch) {
+      if (wordSearch.length > 2) {
+        const listData = [];
+        actions.map((action) => {
+          action.descripcion.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.institucion.siglas.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.institucion.nombre.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.perioricidadReporte.toUpperCase().includes(wordSearch.toUpperCase()) ||
+          action.identificador.toUpperCase().includes(wordSearch.toUpperCase())
+            ? listData.push(action)
+            : "";
+        });
+        setDataSearch(listData);
+      }
+    }
+  }, [wordSearch, dataSearch]);
+
+  let rows = [];
+  if (wordSearch === "" || wordSearch.length < 3) {
+    rows = actions.slice();
+  } else {
+    rows = dataSearch.slice();
+  }
+
   return (
     <>
       <Card>
@@ -319,7 +345,7 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {actions.slice(page * limit, page * limit + limit).map((accion) => (
+                  {rows.slice(page * limit, page * limit + limit).map((accion) => (
                     <TableRow
                       hover
                       key={accion.id}
@@ -358,9 +384,11 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
                       <TableCell>
                         <IconButton color="default" onClick={() => handleEdit({ ...accion })}>
                           <EditRoundedIcon></EditRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Editar</p>
                         </IconButton>
                         <IconButton color="default" onClick={() => handleDelete({ ...accion })}>
                           <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Eliminar</p>
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -372,7 +400,7 @@ const ActionListResults = ({ actions, updateView, objetives }) => {
         </PerfectScrollbar>
         <TablePagination
           component="div"
-          count={actions.length}
+          count={rows.length}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleLimitChange}
           page={page}

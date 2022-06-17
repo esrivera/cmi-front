@@ -13,6 +13,7 @@ const Accion = () => {
   const [objetive, setObjetive] = useState([]);
   const [action, setAction] = useState([]);
   const [idObjetivo, setIdObjetivo] = useState(0);
+  const [wordSearch, setWordSearch] = useState("");
   const query = {
     uri: apis.accion.get_id_objetive + idObjetivo,
     metodo: "get",
@@ -80,9 +81,16 @@ const Accion = () => {
                   idObjetive={idObjetivo}
                   setIdObjetive={setIdObjetivo}
                   objetives={objetive}
+                  wordSearch={wordSearch}
+                  setWordSearch={setWordSearch}
                 ></ActionListToolbar>
                 <Box sx={{ mt: 3 }}>
-                  <ActionListResults actions={action} updateView={reload} objetives={objetive} />
+                  <ActionListResults
+                    actions={action}
+                    updateView={reload}
+                    objetives={objetive}
+                    wordSearch={wordSearch}
+                  />
                 </Box>
               </Container>
             </Box>

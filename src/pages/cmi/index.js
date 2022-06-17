@@ -13,28 +13,10 @@ const CMI = () => {
   const [objetive, setObjetive] = useState([]);
   const [action, setAction] = useState([]);
   const [idObjetivo, setIdObjetivo] = useState(90);
-  const [idInstitucion, setIdInstitucion] = useState(1);
-  const [institution, setInstitution] = useState([]);
-  const queryInstitution = {
-    uri: apis.institution.get_all,
-    metodo: "get",
-    body: null,
-    page: 0,
-    elementos: 15,
-    sort: "nombre,asc",
-  };
+  const [wordSearch, setWordSearch] = useState("");
 
   const query = {
     uri: apis.accion.get_id_objetive + idObjetivo,
-    metodo: "get",
-    body: null,
-    page: 0,
-    elementos: 15,
-    sort: "identificador,asc",
-  };
-
-  const queryAccion = {
-    uri: apis.accion.get_id_institution + idInstitucion,
     metodo: "get",
     body: null,
     page: 0,
@@ -69,17 +51,10 @@ const CMI = () => {
     }, 500);
   }, [idObjetivo, setIdObjetivo]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setUpdate(0);
-    }, 500);
-  }, [idInstitucion, setIdInstitucion]);
-
   const RenderData = () => {
     if (update === 0) {
-      if (objetive.length < 1 || institution.length < 1) {
+      if (objetive.length < 1) {
         searchObjetives();
-        searchInstitution();
       }
       searchActions();
     }
@@ -105,12 +80,11 @@ const CMI = () => {
                   idObjetive={idObjetivo}
                   setIdObjetive={setIdObjetivo}
                   objetives={objetive}
-                  institution={institution}
-                  idInstitucion={idInstitucion}
-                  setIdInstitucion={setIdInstitucion}
+                  wordSearch={wordSearch}
+                  setWordSearch={setWordSearch}
                 ></CmiListToolbar>
                 <Box sx={{ mt: 3 }}>
-                  <CmiListResults actions={action} updateView={reload} objetives={objetive} />
+                  <CmiListResults actions={action} updateView={reload} wordSearch={wordSearch} />
                 </Box>
               </Container>
             </Box>
@@ -161,29 +135,6 @@ const CMI = () => {
         if (result.status === 200) {
           setAction(result.data.content);
           setUpdate(2);
-        }
-      })
-      .catch((exception) => {
-        if (exception.response) {
-          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
-        }
-      });
-  };
-
-  const searchInstitution = async () => {
-    await clientPublic
-      .get(
-        queryInstitution.uri +
-          "?page=" +
-          queryInstitution.page +
-          "&size=" +
-          queryInstitution.elementos +
-          "&sort=" +
-          queryInstitution.sort
-      )
-      .then((result) => {
-        if (result.status === 200) {
-          setInstitution(result.data.content);
         }
       })
       .catch((exception) => {

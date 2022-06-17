@@ -37,9 +37,9 @@ const Reporte = () => {
   const [nameObjetive, setNameObjetive] = useState("");
   const [reportTitle, setReportTitle] = useState("");
   const [anio, setAnio] = useState(2021);
-  const [institutionId, setInstitutionId] = useState("");
-  const [objetiveId, setObjetiveId] = useState("");
-  const [actionId, setActionId] = useState("");
+  const [institutionId, setInstitutionId] = useState();
+  const [objetiveId, setObjetiveId] = useState();
+  const [actionId, setActionId] = useState();
   const [labelData, setLabelData] = useState([]);
   const [porcentajeData, setPorcentajeData] = useState([]);
   const [reportData, setReportData] = useState([]);

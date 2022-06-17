@@ -19,7 +19,7 @@ import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 import apis from "src/utils/bookApis";
 import { Search as SearchIcon } from "../../icons/search";
 
-const InstitutionListToolbar = ({ updateView }) => {
+const InstitutionListToolbar = ({ updateView, wordSearch, setWordSearch }) => {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [institucion, setInstitucion] = useState({
@@ -69,6 +69,10 @@ const InstitutionListToolbar = ({ updateView }) => {
     });
   };
 
+  const handleChangeWord = (event) => {
+    setWordSearch(event.target.value);
+  };
+
   return (
     <>
       <Box>
@@ -96,6 +100,10 @@ const InstitutionListToolbar = ({ updateView }) => {
               <Box sx={{ maxWidth: 500 }}>
                 <TextField
                   fullWidth
+                  name="wordSearch"
+                  value={wordSearch}
+                  onChange={handleChangeWord}
+                  autoFocus
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
