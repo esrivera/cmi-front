@@ -3,16 +3,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-  Box,
-  Button,
-  Checkbox,
-  Container,
-  FormHelperText,
-  Link,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const Register = () => {

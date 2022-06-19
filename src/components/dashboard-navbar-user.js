@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import styled from "@emotion/styled";
 import NextLink from "next/link";
-import { AppBar, Avatar, Badge, Box, IconButton, Link, Toolbar, Tooltip } from "@mui/material";
+import { AppBar, Box, IconButton, Link, Toolbar } from "@mui/material";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({

@@ -10,27 +10,25 @@
 
 - [Dashboard Page](https://material-kit-react.devias.io)
 - [Users Page](https://material-kit-react.devias.io/customers)
-- [Products Page](https://material-kit-react.devias.io/products)
 - [Register Page](https://material-kit-react.devias.io/register)
 - [Login Page](https://material-kit-react.devias.io/login)
-- [Account Page](https://material-kit-react.devias.io/account)
-- [Settings Page](https://material-kit-react.devias.io/settings)
 
 ## Free Figma Community File
- - [Duplicate File](https://www.figma.com/community/file/1039837897183395483/Devias-Dashboard-Design-Library-Kit)
+
+- [Duplicate File](https://www.figma.com/community/file/1039837897183395483/Devias-Dashboard-Design-Library-Kit)
 
 ## Upgrade to PRO Version
 
 We also have a pro version of this product which bundles even more pages and components if you want to save more time and design efforts :)
 
-| Free Version (this one)  | [Material Kit Pro - React](https://material-ui.com/store/items/devias-kit-pro/) |
-| ------------------------ | :----------------------------------------------------------- |
-| **7** Demo Pages         | **40+** demo pages
-| -                        | ✔ Dark & light mode
-| -                        | ✔ Authentication with *Amplify**, **Auth0**, **JWT** and **Firebase**
-| -                        | ✔ TypeScript version - for Standard Plus and Extended license
-| -                        | ✔ Design files (sketch & figma) - for Standard Plus and Extended license
-| -                        | ✔ Complete users flows
+| Free Version (this one) | [Material Kit Pro - React](https://material-ui.com/store/items/devias-kit-pro/) |
+| ----------------------- | :------------------------------------------------------------------------------ |
+| **7** Demo Pages        | **40+** demo pages                                                              |
+| -                       | ✔ Dark & light mode                                                             |
+| -                       | ✔ Authentication with \*Amplify**, **Auth0**, **JWT** and **Firebase\*\*        |
+| -                       | ✔ TypeScript version - for Standard Plus and Extended license                   |
+| -                       | ✔ Design files (sketch & figma) - for Standard Plus and Extended license        |
+| -                       | ✔ Complete users flows                                                          |
 
 ## Quick start
 

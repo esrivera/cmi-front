@@ -28,7 +28,6 @@ import {
   Typography,
 } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import BatchPredictionRoundedIcon from "@mui/icons-material/BatchPredictionRounded";
 import apis from "src/utils/bookApis";
 import SummarizeRoundedIcon from "@mui/icons-material/SummarizeRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
@@ -358,9 +357,7 @@ const ActionListResults = ({ actions, updateView, objetives, wordSearch }) => {
                             display: "flex",
                           }}
                         >
-                          <Typography color="textPrimary" variant="body1">
-                            {accion.identificador}
-                          </Typography>
+                          <Typography color="textPrimary">{accion.identificador}</Typography>
                         </Box>
                       </TableCell>
                       <TableCell>{accion.descripcion}</TableCell>

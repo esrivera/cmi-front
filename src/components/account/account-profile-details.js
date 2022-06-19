@@ -18,8 +18,6 @@ import {
 } from "@mui/material";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
-import LocalPhoneRoundedIcon from "@mui/icons-material/LocalPhoneRounded";
-import AccountBalanceRoundedIcon from "@mui/icons-material/AccountBalanceRounded";
 import BadgeRoundedIcon from "@mui/icons-material/BadgeRounded";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
