@@ -52,7 +52,7 @@ const VisualizarListToolbar = ({
           <Typography sx={{ m: 1 }} variant="h4">
             Visualización CMI
           </Typography>
-          <Link href="/inicio/home">
+          <Link href="/inicio/cmi">
             <Button variant="outlined" sx={{ m: 4 }}>
               <KeyboardReturnRoundedIcon></KeyboardReturnRoundedIcon>Volver
             </Button>

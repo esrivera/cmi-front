@@ -52,7 +52,7 @@ const CmiListToolbarUser = ({
           <Typography sx={{ m: 1 }} variant="h4">
             Gestión CMI
           </Typography>
-          <Link href="/inicio/home">
+          <Link href="/inicio/cmi">
             <Button variant="outlined" sx={{ m: 4 }}>
               <KeyboardReturnRoundedIcon></KeyboardReturnRoundedIcon>Volver
             </Button>

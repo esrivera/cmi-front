@@ -137,7 +137,7 @@ const Alerta = () => {
           query2.page +
           "&size=" +
           query2.elementos +
-          "&sort=" +
+          "&sort.sorted=" +
           query2.sort
       )
       .then((result) => {

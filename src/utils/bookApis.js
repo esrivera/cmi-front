@@ -58,6 +58,7 @@ export default {
     get_by_emisor: "/alertas/byInstitucionEmi/",
     get_by_receptor: "/alertas/byInstitucionRecep/",
     get_evidencia: "/alertas/evidencia/",
+    get_by_pendientes: "/alertas/pendientes/byInstitucionRecep/",
     patch_estado: "/alertas/",
   },
 };

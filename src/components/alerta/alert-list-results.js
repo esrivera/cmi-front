@@ -25,6 +25,7 @@ import CloudDownloadRoundedIcon from "@mui/icons-material/CloudDownloadRounded";
 import { clientPublic } from "src/api/axios";
 import PowerSettingsNewRoundedIcon from "@mui/icons-material/PowerSettingsNewRounded";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
+import { parseJwt } from "src/utils/userAction";
 
 const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
   const [limit, setLimit] = useState(10);
@@ -86,8 +87,14 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
   };
 
   const handlePatch = () => {
+    const ISSERVER = typeof window === "undefined";
+    const id = "";
+    if (!ISSERVER) {
+      const token = localStorage.getItem("token");
+      id = parseJwt(token).instituteId;
+    }
     clientPublic
-      .patch(apis.alerta.patch_estado + alertId, null, {
+      .patch(apis.alerta.patch_estado + alertId + "/" + id, null, {
         params: { estadoAlerta: "RECI" },
       })
       .then((res) => {

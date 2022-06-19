@@ -72,7 +72,7 @@ export const DashboardSidebarUser = (props) => {
       >
         <div>
           <Box sx={{ p: 3 }}>
-            <NextLink href="/inicio/home" passHref>
+            <NextLink href="/inicio/cmi" passHref>
               <a>
                 <Logo
                   sx={{

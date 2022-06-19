@@ -56,7 +56,7 @@ const Login = () => {
           if (rolUser === "ADMIN") {
             router.push("/inicio");
           } else {
-            router.push("/inicio/home");
+            router.push("/inicio/cmi");
           }
         }
       })

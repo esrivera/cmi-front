@@ -265,7 +265,7 @@ const Estadistica = () => {
             setPorcentajeData(listPorcentaje);
             setLabelData(listLabel);
             setReportTitle("Porcentaje de avance");
-            setTitleGeneral("Porcentaje de avance del " + nameInstitution + "en el " + anio);
+            setTitleGeneral("Porcentaje de avance del " + nameInstitution + " en el " + anio);
           }
         })
         .catch((exception) => {
@@ -657,7 +657,7 @@ const Estadistica = () => {
             </Typography>
             <Bar data={data} sx={{ m: 1 }} options={opciones}></Bar>
           </div>
-          <Box sx={{ mt: 10 }}>
+          <Box sx={{ mt: 15 }}>
             <TableData
               reportData={reportData}
               reportDataYear={reportDataYear}

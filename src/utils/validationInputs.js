@@ -2,7 +2,7 @@ export const validationMeta = {
   submitMeta: function submitMeta(data) {
     const errors = {};
     if (data.anioPlanificado.length > 4 || data.anioPlanificado.length < 4) {
-      errors.anioPlanificado = "El tamaño del año planificado debe ser de 4 caracteres.";
+      errors.anioPlanificado = "El tamaño del año planificado debe ser de 4 carácteres.";
     } else if (data.anioPlanificado > 2030 || data.anioPlanificado < 2021) {
       errors.anioPlanificado = "El año planificado debe estar entre 2021 y 2030.";
     }
@@ -44,7 +44,7 @@ export const validationPassword = {
     if (data.nuevaContrasenia.length < 1 || data.nuevaContrasenia === "") {
       errors.nuevaContrasenia = "Este campo es necesario";
     } else if (data.nuevaContrasenia.length < 8 || data.nuevaContrasenia.length > 16) {
-      errors.nuevaContrasenia = "La contraseña debe estar entre 8 y 16 caracteres alfanuméricos";
+      errors.nuevaContrasenia = "La contraseña debe estar entre 8 y 16 carácteres alfanuméricos";
     }
     return errors;
   },
@@ -54,7 +54,7 @@ export const validateAnio = {
   submitReport: function submitReport(data) {
     const errors = {};
     if (data.anio.length > 4 || data.anio.length < 4) {
-      errors.anio = "El tamaño del año planificado debe ser de 4 caracteres.";
+      errors.anio = "El tamaño del año planificado debe ser de 4 carácteres.";
     } else if (data.anio > 2030 || data.anio < 2021) {
       errors.anio = "El año debe estar entre 2021 y 2030.";
     }

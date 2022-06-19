@@ -166,6 +166,10 @@ export const AccountProfileDetails = ({ user }) => {
                 Los campos marcados con ( <font color={palette.error.main}> *</font> ) son
                 obligatorios:
               </label>
+              <br></br>
+              <label style={{ fontSize: 12 }}>
+                La contraseña debe constar de 8 a 16 carácteres alfanuméricos
+              </label>
             </Grid>
             <Grid item md={5} xs={12}>
               <FormControl variant="outlined">

@@ -351,9 +351,9 @@ const AlertListToolbar = ({ updateView, tipoAlerta, setTipoAlerta, wordSearch, s
                 <CloudUploadRoundedIcon></CloudUploadRoundedIcon>
                 <input type="file" name="file" hidden onChange={handleChangeFile} />
                 <p style={{ fontSize: 18 }}>Evidencia</p>
-                <p style={{ color: "blue", fontSize: 14, marginLeft: 2 }}>{nombreArchivo}</p>
+                <p style={{ color: "blue", fontSize: 14, marginLeft: 20}}>{nombreArchivo}</p>
               </IconButton>
-              <p style={{ fontSize: 13 }}>Cargar un solo archivo PDF</p>
+              <p style={{ fontSize: 13 }}>Cargar un solo archivo PDF no mayor a 2Mb</p>
               {errors.file ? <p style={{ color: "red", fontSize: 11 }}>{errors.file}</p> : null}
             </Grid>
             <Grid container alignContent="center" sx={{ mt: 1 }} justify="flex-end">
