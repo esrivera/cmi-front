@@ -55,8 +55,8 @@ function getStyles(name, idInstitutions, theme) {
 const AlertListToolbar = ({ updateView, tipoAlerta, setTipoAlerta, wordSearch, setWordSearch }) => {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
+  const [typeAlert, setTypeAlert] = useState("");
   const [alert, setAlert] = useState({
-    tipoAlerta: "",
     descripcionAlerta: "",
     fechaAlerta: "",
     idInstitucionEmisor: "",
@@ -111,7 +111,7 @@ const AlertListToolbar = ({ updateView, tipoAlerta, setTipoAlerta, wordSearch, s
       descripcionAlerta: alert.descripcionAlerta,
       idInstitucionEmisor: id,
       idInstitucionReceptor: arrayIdInstitution,
-      tipoAlerta: alert.tipoAlerta,
+      tipoAlerta: typeAlert,
       fechaAlerta: date.toISOString().split("T")[0],
       file: file,
     };
@@ -162,11 +162,11 @@ const AlertListToolbar = ({ updateView, tipoAlerta, setTipoAlerta, wordSearch, s
 
   const clearData = () => {
     setAlert({
-      tipoAlerta: "",
       descripcionAlerta: "",
       fechaAlerta: "",
       idInstitucionEmisor: "",
     });
+    setTypeAlert("");
   };
 
   const handleChange = (event) => {
@@ -197,6 +197,10 @@ const AlertListToolbar = ({ updateView, tipoAlerta, setTipoAlerta, wordSearch, s
 
   const handleChangeRadio = (event) => {
     setTipoAlerta(event.target.value);
+  };
+
+  const handleChangeAlert = (event) => {
+    setTypeAlert(event.target.value);
   };
 
   return (
@@ -276,18 +280,22 @@ const AlertListToolbar = ({ updateView, tipoAlerta, setTipoAlerta, wordSearch, s
               </label>
             </Grid>
             <Grid item md={5} xs={12}>
-              <TextField
-                fullWidth
-                required
-                name="tipoAlerta"
-                margin="normal"
-                id="outlined-basic"
-                label="Tipo de Alerta"
-                type="text"
-                autoComplete="off"
-                onChange={handleChange}
-                value={alert.tipoAlerta}
-              />
+              <FormControl fullWidth sx={{ minWidth: 120 }}>
+                <InputLabel id="demo-simple-select-label">Tipo de Alerta</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="Tipo de Alerta"
+                  value={typeAlert}
+                  onChange={handleChangeAlert}
+                >
+                  <MenuItem disabled value="">
+                    <em>Seleccionar</em>
+                  </MenuItem>
+                  <MenuItem value={"SOC"}>Socioeconómica</MenuItem>
+                  <MenuItem value={"DEH"}>Delito Hidrocarburífero</MenuItem>
+                </Select>
+              </FormControl>
               {errors.tipoAlerta ? (
                 <p style={{ color: "red", fontSize: 11 }}>{errors.tipoAlerta}</p>
               ) : null}
@@ -351,7 +359,7 @@ const AlertListToolbar = ({ updateView, tipoAlerta, setTipoAlerta, wordSearch, s
                 <CloudUploadRoundedIcon></CloudUploadRoundedIcon>
                 <input type="file" name="file" hidden onChange={handleChangeFile} />
                 <p style={{ fontSize: 18 }}>Evidencia</p>
-                <p style={{ color: "blue", fontSize: 14, marginLeft: 20}}>{nombreArchivo}</p>
+                <p style={{ color: "blue", fontSize: 14, marginLeft: 20 }}>{nombreArchivo}</p>
               </IconButton>
               <p style={{ fontSize: 13 }}>Cargar un solo archivo PDF no mayor a 2Mb</p>
               {errors.file ? <p style={{ color: "red", fontSize: 11 }}>{errors.file}</p> : null}

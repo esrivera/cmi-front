@@ -46,7 +46,6 @@ const ObjetiveListResults = ({ objetives, updateView, wordSearch }) => {
 
   const handleEdit = (data) => {
     setOpen(true);
-    console.log(data);
     setIdObjetivo(data.id);
     setObjetive(data);
   };

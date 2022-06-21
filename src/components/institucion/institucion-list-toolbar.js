@@ -204,7 +204,7 @@ const InstitutionListToolbar = ({ updateView, wordSearch, setWordSearch }) => {
                   margin="normal"
                   id="outlined-basic"
                   label="Teléfono"
-                  type="number"
+                  type="text"
                   autoComplete="off"
                   placeholder="Ej. 3824290"
                   onChange={handleChange}

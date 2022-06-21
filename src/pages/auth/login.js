@@ -62,7 +62,11 @@ const Login = () => {
       })
       .catch((exception) => {
         if (exception.response) {
-          if (exception.response.status >= 400 || exception.response.status < 500) {
+          if (exception.response.status == 401) {
+            msmSwalError(
+              "Usuario bloqueado, porfavor contáctese con el administrador del sistema."
+            );
+          } else if (exception.response.status >= 400 || exception.response.status < 500) {
             msmSwalError("No se pudo iniciar sesión credenciales invalidas.");
           }
         } else {

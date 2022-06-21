@@ -59,7 +59,7 @@ const Perfil = () => {
                   Información Personal
                 </Typography>
                 <Grid container spacing={3}>
-                  <Grid item lg={12} md={6} xs={12}>
+                  <Grid item lg={12} md={12} xs={12}>
                     <AccountProfileDetails user={userInfo} />
                   </Grid>
                 </Grid>

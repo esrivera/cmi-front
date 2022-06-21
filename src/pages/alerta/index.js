@@ -20,7 +20,7 @@ const Alerta = () => {
     body: null,
     page: 0,
     elementos: 15,
-    sort: "fechaAlerta,asc",
+    sort: "fechaAlerta,desc",
   };
   const query2 = {
     uri: apis.alerta.get_by_receptor,
@@ -28,7 +28,7 @@ const Alerta = () => {
     body: null,
     page: 0,
     elementos: 15,
-    sort: "fechaAlerta,asc",
+    sort: "fechaAlerta,desc",
   };
 
   const reload = () => {
