@@ -68,6 +68,9 @@ const CmiListResults = ({ actions, updateView, wordSearch }) => {
   const [openActive, setOpenActive] = useState(false);
   const [openFormula, setOpenFormula] = useState(false);
   const [openDescripcion, setOpenDescripcion] = useState(false);
+  const [openSemaforo, setOpenSemaforo] = useState(false);
+  const [anioSemaforo, setAnioSemaforo] = useState("");
+  const [semaforos, setSemaforos] = useState([]);
   const query = {
     uri: apis.meta.get_all_indicador,
     metodo: "get",
@@ -75,6 +78,14 @@ const CmiListResults = ({ actions, updateView, wordSearch }) => {
     page: 0,
     elementos: 15,
     sort: "anioPlanificado,asc",
+  };
+  const query2 = {
+    uri: apis.meta.get_estado_meta,
+    metodo: "get",
+    body: null,
+    page: 0,
+    elementos: 15,
+    sort: "fecha,asc",
   };
 
   const handleLimitChange = (event) => {
@@ -147,6 +158,60 @@ const CmiListResults = ({ actions, updateView, wordSearch }) => {
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
+  };
+
+  const handleViewState = (data) => {
+    setOpenSemaforo(true);
+    searchMetas(data.indicador[0].id);
+    setIdIndicador(data.indicador[0].id);
+  };
+
+  const handleChangeSemaforo = (event) => {
+    setSemaforos([]);
+    setAnioSemaforo(event.target.value);
+  };
+
+  const handleCloseSemaforo = () => {
+    setOpenSemaforo(false);
+    setAnioSemaforo("");
+    setSemaforos([]);
+  };
+
+  useEffect(() => {
+    if (anioSemaforo > 0) {
+      searchSemaforo();
+    }
+  }, [anioSemaforo]);
+
+  const searchSemaforo = async () => {
+    await clientPublic
+      .get(
+        query2.uri +
+          idIndicador +
+          "?page=" +
+          query2.page +
+          "&size=" +
+          query2.elementos +
+          "&sort=" +
+          query2.sort,
+        {
+          params: { anio: anioSemaforo },
+        }
+      )
+      .then((result) => {
+        if (result.status === 200) {
+          if (result.data.content.length > 0) {
+            setSemaforos(result.data.content);
+          } else {
+            setSemaforos([]);
+          }
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+        }
+      });
   };
 
   const handleClose = () => {
@@ -436,15 +501,11 @@ const CmiListResults = ({ actions, updateView, wordSearch }) => {
                           ? accion.indicador[0].porcentajeIndicador
                           : 0}
                       </TableCell>
-                      <TableCell
-                        sx={{
-                          backgroundColor:
-                            accion.indicador[0].estadoCumplimiento === "EN_EJECUCION"
-                              ? "lightgreen"
-                              : "red",
-                        }}
-                      >
-                        {accion.indicador[0].estadoCumplimiento}
+                      <TableCell>
+                        <IconButton color="default" onClick={() => handleViewState({ ...accion })}>
+                          <InfoRoundedIcon></InfoRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Ver</p>
+                        </IconButton>
                       </TableCell>
                       <TableCell>
                         <IconButton color="default" onClick={() => handleActive({ ...accion })}>
@@ -782,6 +843,96 @@ const CmiListResults = ({ actions, updateView, wordSearch }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEvidencia}>Cerrar</Button>
+        </DialogActions>
+      </Dialog>
+      {/* Lista de estados de cumplimiento */}
+      <Dialog
+        open={openSemaforo}
+        onClose={handleCloseSemaforo}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        maxWidth={"md"}
+        fullWidth
+      >
+        <DialogTitle id="alert-dialog-title">Lista de estados de cumplimiento por año</DialogTitle>
+        <DialogContent>
+          <FormControl sx={{ minWidth: 120, marginTop: 2, marginBottom: 2 }}>
+            <InputLabel id="demo-simple-select-autowidth-label">Año</InputLabel>
+            <Select
+              value={anioSemaforo}
+              onChange={handleChangeSemaforo}
+              id="demo-controlled-open-select"
+              labelId="demo-controlled-open-select-label"
+              label="label"
+            >
+              <MenuItem disabled value="">
+                <em>--Seleccione--</em>
+              </MenuItem>
+              {metas.map((meta) => (
+                <MenuItem key={meta.id} value={meta.anioPlanificado}>
+                  {meta.anioPlanificado}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <Grid item md={12} xs={12}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 300 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="left" width={120}>
+                      Fecha
+                    </TableCell>
+                    <TableCell align="left">Porcentaje o N° de Acciones Realizadas</TableCell>
+                    <TableCell align="left">Estado</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {semaforos.map((row) => (
+                    <TableRow
+                      key={row.idMetaTrimestre}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell width="30%" component="th" scope="row">
+                        {row.fecha}
+                      </TableCell>
+                      <TableCell width="30%" align="left">
+                        {row.porcentajeAvanceTrimestre}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          backgroundColor:
+                            row.estadoCumplimiento === "EN_EJECUCION"
+                              ? "#69CD37"
+                              : row.estadoCumplimiento === "CUMPLIDO"
+                              ? "#CCCF03"
+                              : row.estadoCumplimiento === "NO_CUMPLIDO"
+                              ? "#FE333F"
+                              : "gray",
+                          color: "#F6F2F2",
+                          fontSize: 16,
+                        }}
+                        align="left"
+                        width="20%"
+                      >
+                        {row.estadoCumplimiento === "EN_EJECUCION"
+                          ? "En Ejecución"
+                          : row.estadoCumplimiento === "CUMPLIDO"
+                          ? "Cumplido"
+                          : row.estadoCumplimiento === "NO_CUMPLIDO"
+                          ? "No Cumplido"
+                          : "No Iniciado"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseSemaforo}>Cerrar</Button>
         </DialogActions>
       </Dialog>
     </>
