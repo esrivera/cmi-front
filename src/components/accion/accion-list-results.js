@@ -35,8 +35,9 @@ import PowerSettingsNewRoundedIcon from "@mui/icons-material/PowerSettingsNewRou
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 
-const ActionListResults = ({ actions, updateView, objetives, wordSearch }) => {
+const ActionListResults = ({ actions, updateView, wordSearch }) => {
   const [selectedActionIds, setSelectedActionIds] = useState([]);
+  const [objetives, setObjetives] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
   const [idAccionEstrategica, setIdAccionEstrategica] = useState("");
@@ -74,7 +75,14 @@ const ActionListResults = ({ actions, updateView, objetives, wordSearch }) => {
     elementos: 15,
     sort: "nombre,asc",
   };
-
+  const queryObjetive = {
+    uri: apis.objetive.get_all,
+    metodo: "get",
+    body: null,
+    page: 0,
+    elementos: 15,
+    sort: "nombre,asc",
+  };
   const queryMeta = {
     uri: apis.meta.get_all_indicador,
     metodo: "get",
@@ -87,6 +95,29 @@ const ActionListResults = ({ actions, updateView, objetives, wordSearch }) => {
   const handleLimitChange = (event) => {
     setLimit(+event.target.value);
     setPage(0);
+  };
+
+  const searchObjetives = () => {
+    clientPublic
+      .get(
+        queryObjetive.uri +
+          "?page=" +
+          queryObjetive.page +
+          "&size=" +
+          queryObjetive.elementos +
+          "&sort=" +
+          queryObjetive.sort
+      )
+      .then((result) => {
+        if (result.status === 200) {
+          setObjetives(result.data.content);
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+        }
+      });
   };
 
   const handleEdit = (data) => {
@@ -110,6 +141,7 @@ const ActionListResults = ({ actions, updateView, objetives, wordSearch }) => {
       descripcionResultado: data.indicador[0].formula[0].descripcionResultado,
       perioricidadReporte: data.perioricidadReporte,
     });
+    searchObjetives();
     searchInstitution();
     errors.nombre = null;
     errors.descripcionAccEstrategica = null;
@@ -482,7 +514,7 @@ const ActionListResults = ({ actions, updateView, objetives, wordSearch }) => {
                     id="demo-simple-select-autowidth"
                     value={periodicidad}
                     onChange={handleChangePeriodo}
-                    autoWidth
+                    fullWidth
                     label="Periodicidad"
                   >
                     <MenuItem disabled value="">

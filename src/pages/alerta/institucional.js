@@ -4,27 +4,31 @@ import { clientPublic } from "src/api/axios";
 import apis from "src/utils/bookApis";
 import { useEffect, useState } from "react";
 import { msmSwalError } from "src/theme/theme";
-import CmiListToolbar from "src/components/cmi/accion-list-toolbar";
-import CmiListResults from "src/components/cmi/accion-list-results";
+import { DashboardLayout } from "src/components/dashboard-layout";
+import AlertInstitutionListToolbar from "src/components/alerta/alert-institution-list-toolbar";
+import AlertInstitutionListResults from "src/components/alerta/alert-institution-list-results";
 
-const CMI = () => {
+const AlertaInstitucional = () => {
   const [update, setUpdate] = useState(0);
-  const [action, setAction] = useState([]);
-  const [idObjetivo, setIdObjetivo] = useState("");
+  const [alerts, setAlerts] = useState([]);
+  const [idInstitucion, setIdInstitucion] = useState("");
   const [wordSearch, setWordSearch] = useState("");
-
   const query = {
-    uri: apis.accion.get_id_objetive + idObjetivo,
+    uri: apis.alerta.get_by_emisor,
     metodo: "get",
     body: null,
     page: 0,
     elementos: 15,
-    sort: "identificador,asc",
+    sort: "fechaAlerta,desc",
   };
 
   const reload = () => {
     setUpdate(1);
   };
+
+  useEffect(() => {
+    reload();
+  }, [idInstitucion, setIdInstitucion]);
 
   useEffect(() => {
     if (update === 1) {
@@ -34,13 +38,9 @@ const CMI = () => {
     }
   }, [update]);
 
-  useEffect(() => {
-    reload();
-  }, [idObjetivo, setIdObjetivo]);
-
   const RenderData = () => {
     if (update === 0) {
-      searchActions();
+      searchAlerts();
     }
     switch (update) {
       case 0:
@@ -49,7 +49,7 @@ const CMI = () => {
         return (
           <>
             <Head>
-              <title>Gestión | CMI</title>
+              <title>Alertas Institucionales | CMI</title>
             </Head>
             <Box
               component="main"
@@ -59,14 +59,14 @@ const CMI = () => {
               }}
             >
               <Container maxWidth={false}>
-                <CmiListToolbar
-                  idObjetive={idObjetivo}
-                  setIdObjetive={setIdObjetivo}
+                <AlertInstitutionListToolbar
                   wordSearch={wordSearch}
+                  idInstitucion={idInstitucion}
+                  setIdInstitucion={setIdInstitucion}
                   setWordSearch={setWordSearch}
-                ></CmiListToolbar>
+                ></AlertInstitutionListToolbar>
                 <Box sx={{ mt: 3 }}>
-                  <CmiListResults actions={action} updateView={reload} wordSearch={wordSearch} />
+                  <AlertInstitutionListResults alerts={alerts} wordSearch={wordSearch} />
                 </Box>
               </Container>
             </Box>
@@ -78,23 +78,26 @@ const CMI = () => {
             <CircularProgress />
           </div>
         );
-      case 4:
     }
   };
 
-  const searchActions = () => {
+  const searchAlerts = () => {
     setUpdate(3);
-    if (idObjetivo !== "") {
+    if (idInstitucion !== "") {
       clientPublic
         .get(
-          query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort,
-          {
-            params: { estado: true },
-          }
+          query.uri +
+            idInstitucion +
+            "?page=" +
+            query.page +
+            "&size=" +
+            query.elementos +
+            "&sort=" +
+            query.sort
         )
         .then((result) => {
           if (result.status === 200) {
-            setAction(result.data.content);
+            setAlerts(result.data.content);
             setUpdate(2);
           }
         })
@@ -110,6 +113,7 @@ const CMI = () => {
 
   return <RenderData />;
 };
-//CMI.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
-export default CMI;
+AlertaInstitucional.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+
+export default AlertaInstitucional;

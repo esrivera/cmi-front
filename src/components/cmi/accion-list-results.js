@@ -134,7 +134,11 @@ const CmiListResults = ({ actions, updateView, wordSearch }) => {
         })
         .catch((exception) => {
           if (exception.response) {
-            if (exception.response.status >= 400 && exception.response.status < 500) {
+            if (exception.response.status === 409) {
+              msmSwalError(
+                "La meta para el año " + meta.anioPlanificado + " ya se encuentra registrada"
+              );
+            } else if (exception.response.status >= 400 && exception.response.status < 500) {
               msmSwalError("No se pudo agregar la meta");
             }
           } else {
@@ -355,11 +359,17 @@ const CmiListResults = ({ actions, updateView, wordSearch }) => {
         responseType: "blob",
       })
       .then((res) => {
-        fileDownload(res.data, "documento.pdf");
+        const file = new Blob([res.data], { type: "application/pdf" });
+        const fileURL = URL.createObjectURL(file);
+        window.open(fileURL);
       })
       .catch((exception) => {
         if (exception.response) {
-          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+          if (exception.response.status === 404) {
+            msmSwalError("No existe evidencia registrada para esta actividad");
+          }
+        } else {
+          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
         }
       });
   };

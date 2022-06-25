@@ -14,22 +14,51 @@ import {
   Button,
 } from "@mui/material";
 import Link from "next/link";
-import React, { useState } from "react";
+import apis from "src/utils/bookApis";
+import React, { useEffect, useState } from "react";
 import { Search as SearchIcon } from "../../icons/search";
 import KeyboardReturnRoundedIcon from "@mui/icons-material/KeyboardReturnRounded";
+import { clientPublic } from "src/api/axios";
 
-const VisualizarListToolbar = ({
-  updateView,
-  idObjetive,
-  setIdObjetive,
-  objetives,
-  wordSearch,
-  setWordSearch,
-}) => {
-  const [objetiveId, setObjetiveId] = useState([]);
+const VisualizarListToolbar = ({ idObjetive, setIdObjetive, wordSearch, setWordSearch }) => {
+  const [objetives, setObjetives] = useState([]);
+  const queryObjetive = {
+    uri: apis.objetive.get_all,
+    metodo: "get",
+    body: null,
+    page: 0,
+    elementos: 15,
+    sort: "nombre,asc",
+  };
+
+  const searchObjetives = () => {
+    clientPublic
+      .get(
+        queryObjetive.uri +
+          "?page=" +
+          queryObjetive.page +
+          "&size=" +
+          queryObjetive.elementos +
+          "&sort=" +
+          queryObjetive.sort
+      )
+      .then((result) => {
+        if (result.status === 200) {
+          setObjetives(result.data.content);
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+        }
+      });
+  };
+
+  useEffect(() => {
+    searchObjetives();
+  }, []);
 
   const handleChangeSelect = (event) => {
-    setObjetiveId(event.target.value);
     setIdObjetive(event.target.value);
   };
 
@@ -90,7 +119,7 @@ const VisualizarListToolbar = ({
                       Objetivo Estratégico
                     </InputLabel>
                     <Select
-                      value={objetiveId}
+                      value={idObjetive}
                       onChange={handleChangeSelect}
                       id="demo-simple-select-autowidth"
                       labelId="demo-simple-select-autowidth-label"

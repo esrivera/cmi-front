@@ -37,9 +37,8 @@ import FilterNoneRoundedIcon from "@mui/icons-material/FilterNoneRounded";
 import CloudDownloadRoundedIcon from "@mui/icons-material/CloudDownloadRounded";
 import LoupeRoundedIcon from "@mui/icons-material/LoupeRounded";
 import { clientPublic } from "src/api/axios";
-import fileDownload from "js-file-download";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
-import { validationActivity, validationMeta } from "src/utils/validationInputs";
+import { validationActivity } from "src/utils/validationInputs";
 import { parseJwt } from "src/utils/userAction";
 
 const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
@@ -392,11 +391,17 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
         responseType: "blob",
       })
       .then((res) => {
-        fileDownload(res.data, "document.pdf");
+        const file = new Blob([res.data], { type: "application/pdf" });
+        const fileURL = URL.createObjectURL(file);
+        window.open(fileURL);
       })
       .catch((exception) => {
         if (exception.response) {
-          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+          if (exception.response.status === 404) {
+            msmSwalError("No existe evidencia registrada para esta actividad");
+          }
+        } else {
+          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
         }
       });
   };
@@ -520,8 +525,12 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
                       </TableCell>
                       <TableCell>
                         <IconButton color="default" onClick={() => handleActive({ ...accion })}>
-                          <LoupeRoundedIcon></LoupeRoundedIcon>
-                          <p style={{ fontSize: 14 }}>Agregar</p>
+                          {accion.estadoCargaActividadMeta ? (
+                            <>
+                              <LoupeRoundedIcon></LoupeRoundedIcon>
+                              <p style={{ fontSize: 14 }}>Agregar</p>
+                            </>
+                          ) : null}
                         </IconButton>
                         <IconButton color="default" onClick={() => handleList({ ...accion })}>
                           <SummarizeRoundedIcon></SummarizeRoundedIcon>
@@ -532,7 +541,11 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
                           <p style={{ fontSize: 14 }}>Actividades</p>
                         </IconButton>
                       </TableCell>
-                      <TableCell>{accion.porcentaje}</TableCell>
+                      <TableCell>
+                        {accion.indicador[0].porcentajeIndicadorPorAnio != null
+                          ? accion.indicador[0].porcentajeIndicadorPorAnio
+                          : 0}
+                      </TableCell>
                       <TableCell>
                         <IconButton color="default" onClick={() => handleEdit({ ...accion })}>
                           <EditRoundedIcon></EditRoundedIcon>

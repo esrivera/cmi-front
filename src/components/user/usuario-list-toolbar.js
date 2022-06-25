@@ -17,7 +17,7 @@ import {
   Select,
   InputLabel,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 import apis from "src/utils/bookApis";
@@ -27,14 +27,13 @@ const UserListToolbar = ({
   updateView,
   idInstitute,
   setIdInstitute,
-  institutions,
   wordSearch,
   setWordSearch,
 }) => {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
-  const [institutionId, setInstitutionId] = useState("");
   const [idInstitucion, setIdInstitucion] = useState("");
+  const [institutions, setInstitutions] = useState([]);
   const [usuario, setUsuario] = useState({
     apellido: "",
     email: "",
@@ -43,6 +42,14 @@ const UserListToolbar = ({
     nombre: "",
     telefono: "",
   });
+  const queryInstitution = {
+    uri: apis.institution.get_all,
+    metodo: "get",
+    body: null,
+    page: 0,
+    elementos: 15,
+    sort: "nombre,asc",
+  };
 
   const handleSave = () => {
     clientPublic
@@ -63,6 +70,33 @@ const UserListToolbar = ({
       });
     updateView();
   };
+
+  const searchInstitutions = () => {
+    clientPublic
+      .get(
+        queryInstitution.uri +
+          "?page=" +
+          queryInstitution.page +
+          "&size=" +
+          queryInstitution.elementos +
+          "&sort=" +
+          queryInstitution.sort
+      )
+      .then((result) => {
+        if (result.status === 200) {
+          setInstitutions(result.data.content);
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+        }
+      });
+  };
+
+  useEffect(() => {
+    searchInstitutions();
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -98,7 +132,6 @@ const UserListToolbar = ({
   };
 
   const handleChangeSelect = (event) => {
-    setInstitutionId(event.target.value);
     setIdInstitute(event.target.value);
   };
 
@@ -165,7 +198,7 @@ const UserListToolbar = ({
                   <FormControl sx={{ width: 300 }}>
                     <InputLabel id="demo-simple-select-autowidth-label">Institución</InputLabel>
                     <Select
-                      value={institutionId}
+                      value={idInstitute}
                       onChange={handleChangeSelect}
                       id="demo-simple-select-autowidth"
                       labelId="demo-simple-select-autowidth-label"

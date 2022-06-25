@@ -7,11 +7,17 @@ import { ChartBar as ChartBarIcon } from "../icons/chart-bar";
 import { User as UserIcon } from "../icons/user";
 import EngineeringRoundedIcon from "@mui/icons-material/EngineeringRounded";
 import AddAlertRoundedIcon from "@mui/icons-material/AddAlertRounded";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ManageSearchRoundedIcon from "@mui/icons-material/ManageSearchRounded";
 import { Logo } from "./logo";
 import { NavItem } from "./nav-item";
 
 const items = [
+  {
+    href: "/inicio/cmi",
+    icon: <HomeRoundedIcon fontSize="small" />,
+    title: "Inicio",
+  },
   {
     href: "/usuario/informacion",
     icon: <UserIcon fontSize="small" />,

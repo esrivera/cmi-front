@@ -9,9 +9,8 @@ import VisualizarListResults from "src/components/cmi/visualizar-list-results";
 
 const Visualizar = () => {
   const [update, setUpdate] = useState(0);
-  const [objetive, setObjetive] = useState([]);
   const [action, setAction] = useState([]);
-  const [idObjetivo, setIdObjetivo] = useState(90);
+  const [idObjetivo, setIdObjetivo] = useState("");
   const [wordSearch, setWordSearch] = useState("");
 
   const query = {
@@ -21,15 +20,6 @@ const Visualizar = () => {
     page: 0,
     elementos: 15,
     sort: "identificador,asc",
-  };
-
-  const queryObjetive = {
-    uri: apis.objetive.get_all,
-    metodo: "get",
-    body: null,
-    page: 0,
-    elementos: 15,
-    sort: "nombre,asc",
   };
 
   const reload = () => {
@@ -45,16 +35,11 @@ const Visualizar = () => {
   }, [update]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setUpdate(0);
-    }, 500);
+    reload();
   }, [idObjetivo, setIdObjetivo]);
 
   const RenderData = () => {
     if (update === 0) {
-      if (objetive.length < 1) {
-        searchObjetives();
-      }
       searchActions();
     }
     switch (update) {
@@ -75,10 +60,8 @@ const Visualizar = () => {
             >
               <Container maxWidth={false}>
                 <VisualizarListToolbar
-                  updateView={reload}
                   idObjetive={idObjetivo}
                   setIdObjetive={setIdObjetivo}
-                  objetives={objetive}
                   wordSearch={wordSearch}
                   setWordSearch={setWordSearch}
                 ></VisualizarListToolbar>
@@ -99,48 +82,30 @@ const Visualizar = () => {
     }
   };
 
-  const searchObjetives = () => {
-    //setUpdate(3);
-    clientPublic
-      .get(
-        queryObjetive.uri +
-          "?page=" +
-          queryObjetive.page +
-          "&size=" +
-          queryObjetive.elementos +
-          "&sort=" +
-          queryObjetive.sort
-      )
-      .then((result) => {
-        if (result.status === 200) {
-          setObjetive(result.data.content);
-          //setUpdate(2);
-        }
-      })
-      .catch((exception) => {
-        if (exception.response) {
-          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
-        }
-      });
-  };
-
   const searchActions = () => {
     setUpdate(3);
-    clientPublic
-      .get(query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort, {
-        params: { estado: true },
-      })
-      .then((result) => {
-        if (result.status === 200) {
-          setAction(result.data.content);
-          setUpdate(2);
-        }
-      })
-      .catch((exception) => {
-        if (exception.response) {
-          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
-        }
-      });
+    if (idObjetivo !== "") {
+      clientPublic
+        .get(
+          query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort,
+          {
+            params: { estado: true },
+          }
+        )
+        .then((result) => {
+          if (result.status === 200) {
+            setAction(result.data.content);
+            setUpdate(2);
+          }
+        })
+        .catch((exception) => {
+          if (exception.response) {
+            msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+          }
+        });
+    } else {
+      setUpdate(2);
+    }
   };
 
   return <RenderData />;

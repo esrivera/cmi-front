@@ -199,7 +199,7 @@ const Reporte = () => {
           setPorcentajeData(listPorcentaje);
           setLabelData(listLabel);
           setReportTitle("Porcentaje de avance");
-          setTitleGeneral("Porcentaje de avance del " + nameInstitution);
+          setTitleGeneral("Porcentaje de avance acumulado del " + nameInstitution);
         }
       })
       .catch((exception) => {
@@ -228,7 +228,7 @@ const Reporte = () => {
           setPorcentajeData(listPorcentaje);
           setLabelData(listLabel);
           setReportTitle("Porcentaje de avance");
-          setTitleGeneral("Porcentaje de avance del " + nameObjetive);
+          setTitleGeneral("Porcentaje de avance acumulado del " + nameObjetive);
         }
       })
       .catch((exception) => {

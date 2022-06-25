@@ -8,22 +8,25 @@ import {
   Typography,
   Grid,
   FormControl,
-  MenuItem,
-  Select,
   InputLabel,
-  Button,
+  Select,
+  MenuItem,
 } from "@mui/material";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { clientPublic } from "src/api/axios";
+import { msmSwalError } from "src/theme/theme";
 import apis from "src/utils/bookApis";
 import { Search as SearchIcon } from "../../icons/search";
-import KeyboardReturnRoundedIcon from "@mui/icons-material/KeyboardReturnRounded";
-import { clientPublic } from "src/api/axios";
 
-const CmiListToolbarUser = ({ idObjetive, setIdObjetive, wordSearch, setWordSearch }) => {
-  const [objetives, setObjetives] = useState([]);
-  const queryObjetive = {
-    uri: apis.objetive.get_all,
+const AlertInstitutionListToolbar = ({
+  wordSearch,
+  idInstitucion,
+  setIdInstitucion,
+  setWordSearch,
+}) => {
+  const [institution, setInstitution] = useState([]);
+  const query = {
+    uri: apis.institution.get_all,
     metodo: "get",
     body: null,
     page: 0,
@@ -31,20 +34,23 @@ const CmiListToolbarUser = ({ idObjetive, setIdObjetive, wordSearch, setWordSear
     sort: "nombre,asc",
   };
 
-  const searchObjetives = () => {
-    clientPublic
-      .get(
-        queryObjetive.uri +
-          "?page=" +
-          queryObjetive.page +
-          "&size=" +
-          queryObjetive.elementos +
-          "&sort=" +
-          queryObjetive.sort
-      )
+  const [age, setAge] = React.useState("");
+
+  const handleChange = (event) => {
+    setIdInstitucion(event.target.value);
+    console.log(event.target.value);
+  };
+
+  const handleChangeWord = (event) => {
+    setWordSearch(event.target.value);
+  };
+
+  const searchInstitution = async () => {
+    await clientPublic
+      .get(query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort)
       .then((result) => {
         if (result.status === 200) {
-          setObjetives(result.data.content);
+          setInstitution(result.data.content);
         }
       })
       .catch((exception) => {
@@ -55,16 +61,8 @@ const CmiListToolbarUser = ({ idObjetive, setIdObjetive, wordSearch, setWordSear
   };
 
   useEffect(() => {
-    searchObjetives();
+    searchInstitution();
   }, []);
-
-  const handleChangeSelect = (event) => {
-    setIdObjetive(event.target.value);
-  };
-
-  const handleChangeWord = (event) => {
-    setWordSearch(event.target.value);
-  };
 
   return (
     <>
@@ -79,26 +77,20 @@ const CmiListToolbarUser = ({ idObjetive, setIdObjetive, wordSearch, setWordSear
           }}
         >
           <Typography sx={{ m: 1 }} variant="h4">
-            Gestión CMI
+            Alertas Institucionales
           </Typography>
-          <Link href="/inicio/cmi">
-            <Button variant="outlined" sx={{ m: 4 }}>
-              <KeyboardReturnRoundedIcon></KeyboardReturnRoundedIcon>Volver
-            </Button>
-          </Link>
         </Box>
-        <Box sx={{ mt: 3 }}>
+        <Box sx={{ mt: 3, flexWrap: "wrap" }}>
           <Card>
             <CardContent>
               <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <Box sx={{ maxWidth: 300 }}>
+                <Grid item xs={6}>
+                  <Box sx={{ maxWidth: 400 }}>
                     <TextField
                       fullWidth
                       name="wordSearch"
                       value={wordSearch}
                       onChange={handleChangeWord}
-                      autoFocus
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -108,29 +100,28 @@ const CmiListToolbarUser = ({ idObjetive, setIdObjetive, wordSearch, setWordSear
                           </InputAdornment>
                         ),
                       }}
-                      placeholder="Buscar Acción Estratégica"
+                      placeholder="Buscar Alerta"
                       variant="outlined"
+                      autoFocus
                     />
                   </Box>
                 </Grid>
-                <Grid item xs={4}>
-                  <FormControl sx={{ width: 300 }}>
-                    <InputLabel id="demo-simple-select-autowidth-label">
-                      Objetivo Estratégico
-                    </InputLabel>
+                <Grid item xs={5}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Instituciones</InputLabel>
                     <Select
-                      value={idObjetive}
-                      onChange={handleChangeSelect}
-                      id="demo-simple-select-autowidth"
-                      labelId="demo-simple-select-autowidth-label"
-                      label="Objetivo Estratégico"
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={idInstitucion}
+                      label="Instituciones"
+                      onChange={handleChange}
                     >
                       <MenuItem disabled value="">
                         <em>--Seleccione--</em>
                       </MenuItem>
-                      {objetives.map((objetivo) => (
-                        <MenuItem key={objetivo.id} value={objetivo.id}>
-                          {objetivo.nombre}
+                      {institution.map((element) => (
+                        <MenuItem key={element.idInstitucion} value={element.idInstitucion}>
+                          {element.nombre}
                         </MenuItem>
                       ))}
                     </Select>
@@ -145,4 +136,4 @@ const CmiListToolbarUser = ({ idObjetive, setIdObjetive, wordSearch, setWordSear
   );
 };
 
-export default CmiListToolbarUser;
+export default AlertInstitutionListToolbar;

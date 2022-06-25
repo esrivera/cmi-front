@@ -9,7 +9,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
   IconButton,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -26,6 +28,7 @@ import { clientPublic } from "src/api/axios";
 import PowerSettingsNewRoundedIcon from "@mui/icons-material/PowerSettingsNewRounded";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 import { parseJwt } from "src/utils/userAction";
+import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 
 const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
   const [limit, setLimit] = useState(10);
@@ -35,10 +38,36 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [alertId, setAlertId] = useState("");
   const [dataSearch, setDataSearch] = useState([]);
+  const [openTable, setOpenTable] = useState(false);
+  const [institutions, setInstitutions] = useState([]);
 
   const handleLimitChange = (event) => {
     setLimit(+event.target.value);
     setPage(0);
+  };
+
+  const handleViewInstitutions = (data) => {
+    setOpenTable(true);
+    searchInstitutions(data.idAlerta);
+  };
+
+  const handleCloseViewInstitutions = (data) => {
+    setOpenTable(false);
+  };
+
+  const searchInstitutions = (id) => {
+    clientPublic
+      .get(apis.alerta.get_institutions + id)
+      .then((result) => {
+        if (result.status === 200) {
+          setInstitutions(result.data);
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+        }
+      });
   };
 
   const handleDownload = (data) => {
@@ -47,7 +76,9 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
         responseType: "blob",
       })
       .then((res) => {
-        fileDownload(res.data, "document.pdf");
+        const file = new Blob([res.data], { type: "application/pdf" });
+        const fileURL = URL.createObjectURL(file);
+        window.open(fileURL);
       })
       .catch((exception) => {
         if (exception.response) {
@@ -165,6 +196,7 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
                     <TableCell>Descripción</TableCell>
                     <TableCell>Tipo</TableCell>
                     <TableCell>Estado</TableCell>
+                    <TableCell>Instituciones</TableCell>
                     <TableCell>Evidencia</TableCell>
                     <TableCell>Eliminar</TableCell>
                   </TableRow>
@@ -194,6 +226,15 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
                       </TableCell>
                       <TableCell>
                         {alert.estadoAlerta === "PEND" ? "Pendiente" : "Recibido"}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          color="default"
+                          onClick={() => handleViewInstitutions({ ...alert })}
+                        >
+                          <InfoRoundedIcon></InfoRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Ver</p>
+                        </IconButton>
                       </TableCell>
                       <TableCell>
                         <IconButton color="default" onClick={() => handleDownload({ ...alert })}>
@@ -235,6 +276,7 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
                     <TableCell>Descripción</TableCell>
                     <TableCell>Tipo</TableCell>
                     <TableCell>Estado</TableCell>
+                    <TableCell>Instituciones</TableCell>
                     <TableCell>Evidencia</TableCell>
                     <TableCell>Opción</TableCell>
                   </TableRow>
@@ -264,6 +306,15 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
                       </TableCell>
                       <TableCell>
                         {alert.estadoAlerta === "PEND" ? "Pendiente" : "Recibido"}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          color="default"
+                          onClick={() => handleViewInstitutions({ ...alert })}
+                        >
+                          <InfoRoundedIcon></InfoRoundedIcon>
+                          <p style={{ fontSize: 14 }}>Ver</p>
+                        </IconButton>
                       </TableCell>
                       <TableCell>
                         <IconButton color="default" onClick={() => handleDownload({ ...alert })}>
@@ -336,6 +387,43 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
             Si
           </Button>
           <Button onClick={handleCloseDialog}>No</Button>
+        </DialogActions>
+      </Dialog>
+      {/* Lista de instituciones*/}
+      <Dialog
+        open={openTable}
+        onClose={handleCloseViewInstitutions}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Lista de Instituciones Receptoras</DialogTitle>
+        <DialogContent>
+          <Grid item md={12} xs={12}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 300 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Institución</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {institutions.map((row) => (
+                    <TableRow
+                      key={row.idInstitucionReceptor}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row.nombreInstitucionReceptor}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseViewInstitutions}>Cerrar</Button>
         </DialogActions>
       </Dialog>
     </>

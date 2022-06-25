@@ -16,12 +16,14 @@ export default {
   },
   accion: {
     post_add: "/accionesEstrategicas",
+    get_all: "/accionesEstrategicas",
     get_id_objetive: "/accionesEstrategicas/objetivo/",
     get_id_institution: "/accionesEstrategicas/instituciones/",
     get_id_institution_objetive: "/accionesEstrategicas/byInstitucionyObjetivo/",
     edit_id: "/accionesEstrategicas/",
     delete_id: "/accionesEstrategicas/",
     patch_estado_id: "/accionesEstrategicas/",
+    patch_estado_carga: "/accionesEstrategicas/estadoCargaActiMeta",
   },
   user: {
     post_add: "/auth/nuevo",
@@ -60,5 +62,6 @@ export default {
     get_evidencia: "/alertas/evidencia/",
     get_by_pendientes: "/alertas/pendientes/byInstitucionRecep/",
     patch_estado: "/alertas/",
+    get_institutions: "/alertas/institucionesReceptor/byIdAlertaEmi/",
   },
 };

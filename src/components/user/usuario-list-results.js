@@ -32,7 +32,7 @@ import PowerSettingsNewRoundedIcon from "@mui/icons-material/PowerSettingsNewRou
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 
-const UserListResults = ({ users, institutions, updateView, wordSearch }) => {
+const UserListResults = ({ users, updateView, wordSearch }) => {
   const [selectedUserIds, setSelectedUserIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [estado, setEstado] = useState(false);
@@ -43,6 +43,7 @@ const UserListResults = ({ users, institutions, updateView, wordSearch }) => {
   const [openActive, setOpenActive] = useState(false);
   const [ciUser, setCiUser] = useState("");
   const [dataSearch, setDataSearch] = useState([]);
+  const [institutions, setInstitutions] = useState([]);
   const [usuario, setUsuario] = useState({
     apellido: "",
     email: "",
@@ -52,15 +53,47 @@ const UserListResults = ({ users, institutions, updateView, wordSearch }) => {
     telefono: "",
   });
   const [open, setOpen] = useState(false);
+  const queryInstitution = {
+    uri: apis.institution.get_all,
+    metodo: "get",
+    body: null,
+    page: 0,
+    elementos: 15,
+    sort: "nombre,asc",
+  };
 
   const handleLimitChange = (event) => {
     setLimit(+event.target.value);
     setPage(0);
   };
 
+  const searchInstitutions = () => {
+    clientPublic
+      .get(
+        queryInstitution.uri +
+          "?page=" +
+          queryInstitution.page +
+          "&size=" +
+          queryInstitution.elementos +
+          "&sort=" +
+          queryInstitution.sort
+      )
+      .then((result) => {
+        if (result.status === 200) {
+          setInstitutions(result.data.content);
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+        }
+      });
+  };
+
   const handleEdit = (data) => {
     setOpen(true);
     setIdUser(data.id);
+    searchInstitutions();
     setIdInstitucion(data.institute.idInstitucion);
     setUsuario(data);
   };

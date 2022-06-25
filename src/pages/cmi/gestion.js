@@ -11,12 +11,10 @@ import { parseJwt } from "src/utils/userAction";
 
 const CMIG = () => {
   const [update, setUpdate] = useState(0);
-  const [objetive, setObjetive] = useState([]);
   const [action, setAction] = useState([]);
   const [instituteId, setInstituteId] = useState(0);
-  const [idObjetivo, setIdObjetivo] = useState(90);
+  const [idObjetivo, setIdObjetivo] = useState("");
   const [wordSearch, setWordSearch] = useState("");
-
   const query = {
     uri: apis.accion.get_id_institution_objetive + instituteId + "/" + idObjetivo,
     metodo: "get",
@@ -25,15 +23,6 @@ const CMIG = () => {
     page: 0,
     elementos: 15,
     sort: "identificador,asc",
-  };
-
-  const queryObjetive = {
-    uri: apis.objetive.get_all,
-    metodo: "get",
-    body: null,
-    page: 0,
-    elementos: 15,
-    sort: "nombre,asc",
   };
 
   const reload = () => {
@@ -49,9 +38,7 @@ const CMIG = () => {
   }, [update]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setUpdate(0);
-    }, 500);
+    reload();
   }, [idObjetivo, setIdObjetivo]);
 
   const RenderData = () => {
@@ -61,9 +48,6 @@ const CMIG = () => {
         const token = localStorage.getItem("token");
         const id = parseJwt(token).instituteId;
         setInstituteId(id);
-      }
-      if (objetive.length < 1) {
-        searchObjetives();
       }
       searchActions();
     }
@@ -85,10 +69,8 @@ const CMIG = () => {
             >
               <Container maxWidth={false}>
                 <CmiListToolbarUser
-                  updateView={reload}
                   idObjetive={idObjetivo}
                   setIdObjetive={setIdObjetivo}
-                  objetives={objetive}
                   wordSearch={wordSearch}
                   setWordSearch={setWordSearch}
                 ></CmiListToolbarUser>
@@ -96,7 +78,6 @@ const CMIG = () => {
                   <CmiListResultsUser
                     actions={action}
                     updateView={reload}
-                    objetives={objetive}
                     wordSearch={wordSearch}
                   />
                 </Box>
@@ -113,48 +94,30 @@ const CMIG = () => {
     }
   };
 
-  const searchObjetives = () => {
-    //setUpdate(3);
-    clientPublic
-      .get(
-        queryObjetive.uri +
-          "?page=" +
-          queryObjetive.page +
-          "&size=" +
-          queryObjetive.elementos +
-          "&sort=" +
-          queryObjetive.sort
-      )
-      .then((result) => {
-        if (result.status === 200) {
-          setObjetive(result.data.content);
-          //setUpdate(2);
-        }
-      })
-      .catch((exception) => {
-        if (exception.response) {
-          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
-        }
-      });
-  };
-
   const searchActions = () => {
     setUpdate(3);
-    clientPublic
-      .get(query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort, {
-        params: { estado: true },
-      })
-      .then((result) => {
-        if (result.status === 200) {
-          setAction(result.data.content);
-          setUpdate(2);
-        }
-      })
-      .catch((exception) => {
-        if (exception.response) {
-          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
-        }
-      });
+    if (idObjetivo !== "") {
+      clientPublic
+        .get(
+          query.uri + "?page=" + query.page + "&size=" + query.elementos + "&sort=" + query.sort,
+          {
+            params: { estado: true },
+          }
+        )
+        .then((result) => {
+          if (result.status === 200) {
+            setAction(result.data.content);
+            setUpdate(2);
+          }
+        })
+        .catch((exception) => {
+          if (exception.response) {
+            msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+          }
+        });
+    } else {
+      setUpdate(2);
+    }
   };
 
   return <RenderData />;

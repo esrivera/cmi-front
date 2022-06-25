@@ -10,11 +10,18 @@ import ApartmentRoundedIcon from "@mui/icons-material/ApartmentRounded";
 import EmojiObjectsRoundedIcon from "@mui/icons-material/EmojiObjectsRounded";
 import AttractionsRoundedIcon from "@mui/icons-material/AttractionsRounded";
 import EngineeringRoundedIcon from "@mui/icons-material/EngineeringRounded";
+import AddAlertRoundedIcon from "@mui/icons-material/AddAlertRounded";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import ManageSearchRoundedIcon from "@mui/icons-material/ManageSearchRounded";
 import { Logo } from "./logo";
 import { NavItem } from "./nav-item";
 
 const items = [
+  {
+    href: "/inicio",
+    icon: <HomeRoundedIcon fontSize="small" />,
+    title: "Inicio",
+  },
   {
     href: "/usuario/perfil",
     icon: <UserIcon fontSize="small" />,
@@ -49,6 +56,11 @@ const items = [
     href: "/cmi",
     icon: <EngineeringRoundedIcon fontSize="small" />,
     title: "Gestión CMI",
+  },
+  {
+    href: "/alerta/institucional",
+    icon: <AddAlertRoundedIcon fontSize="small" />,
+    title: "Alertas",
   },
   {
     href: "/estadistica",

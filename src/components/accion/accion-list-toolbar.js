@@ -17,7 +17,7 @@ import {
   Select,
   InputLabel,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 import apis from "src/utils/bookApis";
@@ -27,16 +27,15 @@ const ActionListToolbar = ({
   updateView,
   idObjetive,
   setIdObjetive,
-  objetives,
   wordSearch,
   setWordSearch,
 }) => {
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
-  const [objetiveId, setObjetiveId] = useState([]);
   const [idObjetivo, setIdObjetivo] = useState([]);
   const [idInstitucion, setIdInstitucion] = useState([]);
   const [periodicidad, setPeriodicidad] = useState([]);
+  const [objetives, setObjetives] = useState([]);
   const [accion, setAccion] = useState({
     descDenominador: "",
     descNumerador: "",
@@ -58,6 +57,41 @@ const ActionListToolbar = ({
     elementos: 15,
     sort: "nombre,asc",
   };
+  const queryObjetive = {
+    uri: apis.objetive.get_all,
+    metodo: "get",
+    body: null,
+    page: 0,
+    elementos: 15,
+    sort: "nombre,asc",
+  };
+
+  const searchObjetives = () => {
+    clientPublic
+      .get(
+        queryObjetive.uri +
+          "?page=" +
+          queryObjetive.page +
+          "&size=" +
+          queryObjetive.elementos +
+          "&sort=" +
+          queryObjetive.sort
+      )
+      .then((result) => {
+        if (result.status === 200) {
+          setObjetives(result.data.content);
+        }
+      })
+      .catch((exception) => {
+        if (exception.response) {
+          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+        }
+      });
+  };
+
+  useEffect(() => {
+    searchObjetives();
+  }, []);
 
   const handleSave = () => {
     clientPublic
@@ -132,7 +166,6 @@ const ActionListToolbar = ({
   };
 
   const handleChangeSelect = (event) => {
-    setObjetiveId(event.target.value);
     setIdObjetive(event.target.value);
   };
 
@@ -217,7 +250,7 @@ const ActionListToolbar = ({
                       Objetivo Estratégico
                     </InputLabel>
                     <Select
-                      value={objetiveId}
+                      value={idObjetive}
                       onChange={handleChangeSelect}
                       id="demo-simple-select-autowidth"
                       labelId="demo-simple-select-autowidth-label"
@@ -315,7 +348,7 @@ const ActionListToolbar = ({
                     id="demo-simple-select-autowidth"
                     value={periodicidad}
                     onChange={handleChangePeriodo}
-                    autoWidth
+                    fullWidth
                     label="Periodicidad"
                   >
                     <MenuItem disabled value="">

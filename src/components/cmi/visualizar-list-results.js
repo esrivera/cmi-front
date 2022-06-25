@@ -240,11 +240,17 @@ const VisualizarListResults = ({ actions, wordSearch }) => {
         responseType: "blob",
       })
       .then((res) => {
-        fileDownload(res.data, "documento.pdf");
+        const file = new Blob([res.data], { type: "application/pdf" });
+        const fileURL = URL.createObjectURL(file);
+        window.open(fileURL);
       })
       .catch((exception) => {
         if (exception.response) {
-          msmSwalError("Ocurrio un problema en la red al consultar los datos.");
+          if (exception.response.status === 404) {
+            msmSwalError("No existe evidencia registrada para esta actividad");
+          }
+        } else {
+          msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
         }
       });
   };
@@ -638,15 +644,13 @@ const VisualizarListResults = ({ actions, wordSearch }) => {
                         align="left"
                         width="20%"
                       >
-                        
-                          {row.estadoCumplimiento === "EN_EJECUCION"
-                            ? "En Ejecución"
-                            : row.estadoCumplimiento === "CUMPLIDO"
-                            ? "Cumplido"
-                            : row.estadoCumplimiento === "NO_CUMPLIDO"
-                            ? "No Cumplido"
-                            : "No Iniciado"}
-                       
+                        {row.estadoCumplimiento === "EN_EJECUCION"
+                          ? "En Ejecución"
+                          : row.estadoCumplimiento === "CUMPLIDO"
+                          ? "Cumplido"
+                          : row.estadoCumplimiento === "NO_CUMPLIDO"
+                          ? "No Cumplido"
+                          : "No Iniciado"}
                       </TableCell>
                     </TableRow>
                   ))}
