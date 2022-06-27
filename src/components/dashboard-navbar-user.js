@@ -9,12 +9,17 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   boxShadow: theme.shadows[3],
 }));
 
-const handleLogout = () => {
-  console.log("SALIR");
-};
-
 export const DashboardNavbarUser = (props) => {
   const { onSidebarOpen, ...other } = props;
+
+  const handleLogout = () => {
+    localStorage.clear();
+    document.cookie.split(";").forEach((c) => {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+  };
 
   return (
     <>
@@ -40,7 +45,7 @@ export const DashboardNavbarUser = (props) => {
           <Box sx={{ flexGrow: 1 }} />
           <NextLink href="/">
             <Link to="/">
-              <IconButton color="default">
+              <IconButton onClick={handleLogout} color="default">
                 <ExitToAppRoundedIcon />
                 <p>Salir</p>
               </IconButton>

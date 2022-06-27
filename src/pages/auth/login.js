@@ -22,10 +22,12 @@ import apis from "src/utils/bookApis";
 import { useRouter } from "next/router";
 import { msmSwalError } from "src/theme/theme";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useCookies } from "react-cookie";
 
 const Login = () => {
   const [user, setUser] = useState({ username: "", password: "", showPassword: false });
   const router = useRouter();
+  const [cookies, setCookie] = useCookies(["token"]);
   const handleChange = (event) => {
     setUser({
       ...user,
@@ -51,8 +53,8 @@ const Login = () => {
       .then((res) => {
         if (res.status === 200) {
           localStorage.setItem("token", res.data.token);
-          const dataToken = parseJwt(res.data.token);
           const rolUser = parseJwt(res.data.token).rol;
+          setCookie("token", res.data.token, { path: "/" });
           if (rolUser === "ADMIN") {
             router.push("/inicio");
           } else {
