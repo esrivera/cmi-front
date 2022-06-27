@@ -12,6 +12,18 @@ export default function middleware(req) {
 
   const login = ["/", "/auth/login"];
 
+  const apiRoutes = [
+    "/inicio",
+    "/cmi",
+    "/accion",
+    "/alerta",
+    "/estadistica",
+    "/objetivo",
+    "/usuario",
+  ];
+
+  console.log(url);
+
   if (login.includes(url)) {
     if (jwt) {
       const rolUser = parseJwt(jwt).rol;
@@ -23,18 +35,8 @@ export default function middleware(req) {
     } else {
       return NextResponse.next();
     }
-  }
-
-  if (
-    url.includes("/inicio") ||
-    url.includes("/cmi") ||
-    url.includes("/accion") ||
-    url.includes("/alerta") ||
-    url.includes("/estadistica") ||
-    url.includes("/objetivo") ||
-    url.includes("/usuario")
-  ) {
-    if (jwt === undefined) {
+  } else if (apiRoutes.includes(url)) {
+    if (!jwt) {
       return NextResponse.redirect("/");
     }
     try {
