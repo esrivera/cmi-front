@@ -21,25 +21,25 @@ export default function middleware(req) {
   //   }
   // }
 
-  if (
-    url.includes("/inicio") ||
-    url.includes("/cmi") ||
-    url.includes("/accion") ||
-    url.includes("/alerta") ||
-    url.includes("/estadistica") ||
-    url.includes("/objetivo") ||
-    url.includes("/usuario")
-  ) {
-    if (jwt === undefined) {
-      return NextResponse.redirect("/");
-    }
-    try {
-      verify(jwt, secret);
-      return NextResponse.next();
-    } catch (e) {
-      return NextResponse.redirect("/");
-    }
-  }
+  // if (
+  //   url.includes("/inicio") ||
+  //   url.includes("/cmi") ||
+  //   url.includes("/accion") ||
+  //   url.includes("/alerta") ||
+  //   url.includes("/estadistica") ||
+  //   url.includes("/objetivo") ||
+  //   url.includes("/usuario")
+  // ) {
+  //   if (jwt === undefined) {
+  //     return NextResponse.redirect("/");
+  //   }
+  //   try {
+  //     verify(jwt, secret);
+  //     return NextResponse.next();
+  //   } catch (e) {
+  //     return NextResponse.redirect("/");
+  //   }
+  // }
 
   return NextResponse.next();
 }
