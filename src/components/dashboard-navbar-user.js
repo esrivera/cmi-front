@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import styled from "@emotion/styled";
-import NextLink from "next/link";
-import { AppBar, Box, IconButton, Link, Toolbar } from "@mui/material";
+import { AppBar, Box, IconButton, Toolbar } from "@mui/material";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
+import { useRouter } from "next/router";
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -11,14 +11,16 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }) => ({
 
 export const DashboardNavbarUser = (props) => {
   const { onSidebarOpen, ...other } = props;
+  const router = useRouter();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.clear();
     document.cookie.split(";").forEach((c) => {
       document.cookie = c
         .replace(/^ +/, "")
         .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     });
+    router.push("/");
   };
 
   return (
@@ -43,14 +45,10 @@ export const DashboardNavbarUser = (props) => {
           }}
         >
           <Box sx={{ flexGrow: 1 }} />
-          <NextLink href="/">
-            <Link to="/">
-              <IconButton onClick={handleLogout} color="default">
-                <ExitToAppRoundedIcon />
-                <p>Salir</p>
-              </IconButton>
-            </Link>
-          </NextLink>
+          <IconButton onClick={handleLogout} color="default">
+            <ExitToAppRoundedIcon />
+            <p>Salir</p>
+          </IconButton>
         </Toolbar>
       </DashboardNavbarRoot>
     </>
