@@ -10,8 +10,10 @@ export default function middleware(req) {
 
   const jwt = cookies.token;
 
-  if (url === "/" || url.includes("/auth/login")) {
-    if (jwt !== undefined && jwt !== "") {
+  const login = ["/", "/auth/login"];
+
+  if (login.includes(url)) {
+    if (jwt) {
       const rolUser = parseJwt(jwt).rol;
       if (rolUser === "ADMIN") {
         return NextResponse.redirect("/inicio");
@@ -19,6 +21,7 @@ export default function middleware(req) {
         return NextResponse.redirect("/inicio/cmi");
       }
     } else {
+      return NextResponse.next();
     }
   }
 
@@ -41,6 +44,4 @@ export default function middleware(req) {
       return NextResponse.redirect("/");
     }
   }
-
-  return NextResponse.next();
 }
