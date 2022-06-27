@@ -10,16 +10,16 @@ export default function middleware(req) {
 
   const jwt = cookies.token;
 
-  if (url === "/" || url.includes("/auth/login")) {
-    if (jwt !== undefined) {
-      const rolUser = parseJwt(jwt).rol;
-      if (rolUser === "ADMIN") {
-        return NextResponse.redirect("/inicio");
-      } else {
-        return NextResponse.redirect("/inicio/cmi");
-      }
-    }
-  }
+  // if (url === "/" || url.includes("/auth/login")) {
+  //   if (jwt !== undefined) {
+  //     const rolUser = parseJwt(jwt).rol;
+  //     if (rolUser === "ADMIN") {
+  //       return NextResponse.redirect("/inicio");
+  //     } else {
+  //       return NextResponse.redirect("/inicio/cmi");
+  //     }
+  //   }
+  // }
 
   if (
     url.includes("/inicio") ||
