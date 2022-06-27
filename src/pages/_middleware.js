@@ -10,36 +10,37 @@ export default function middleware(req) {
 
   const jwt = cookies.token;
 
-  // if (url === "/" || url.includes("/auth/login")) {
-  //   if (jwt !== undefined && jwt !== "") {
-  //     const rolUser = parseJwt(jwt).rol;
-  //     if (rolUser === "ADMIN") {
-  //       return NextResponse.redirect("/inicio");
-  //     } else {
-  //       return NextResponse.redirect("/inicio/cmi");
-  //     }
-  //   }
-  // }
+  if (url === "/" || url.includes("/auth/login")) {
+    if (jwt !== undefined && jwt !== "") {
+      const rolUser = parseJwt(jwt).rol;
+      if (rolUser === "ADMIN") {
+        return NextResponse.redirect("/inicio");
+      } else {
+        return NextResponse.redirect("/inicio/cmi");
+      }
+    } else {
+    }
+  }
 
-  // if (
-  //   url.includes("/inicio") ||
-  //   url.includes("/cmi") ||
-  //   url.includes("/accion") ||
-  //   url.includes("/alerta") ||
-  //   url.includes("/estadistica") ||
-  //   url.includes("/objetivo") ||
-  //   url.includes("/usuario")
-  // ) {
-  //   if (jwt === undefined) {
-  //     return NextResponse.redirect("/");
-  //   }
-  //   try {
-  //     verify(jwt, secret);
-  //     return NextResponse.next();
-  //   } catch (e) {
-  //     return NextResponse.redirect("/");
-  //   }
-  // }
+  if (
+    url.includes("/inicio") ||
+    url.includes("/cmi") ||
+    url.includes("/accion") ||
+    url.includes("/alerta") ||
+    url.includes("/estadistica") ||
+    url.includes("/objetivo") ||
+    url.includes("/usuario")
+  ) {
+    if (jwt === undefined) {
+      return NextResponse.redirect("/");
+    }
+    try {
+      verify(jwt, secret);
+      return NextResponse.next();
+    } catch (e) {
+      return NextResponse.redirect("/");
+    }
+  }
 
   return NextResponse.next();
 }
