@@ -23,7 +23,7 @@ export default function middleware(req) {
   ];
 
   console.log(url);
-
+  console.log(apiRoutes.includes(url));
   if (login.includes(url)) {
     if (jwt) {
       const rolUser = parseJwt(jwt).rol;
@@ -36,13 +36,14 @@ export default function middleware(req) {
       return NextResponse.next();
     }
   } else if (apiRoutes.includes(url)) {
-    if (!jwt) {
-      return NextResponse.redirect("/");
-    }
-    try {
-      verify(jwt, secret);
-      return NextResponse.next();
-    } catch (e) {
+    if (jwt) {
+      try {
+        verify(jwt, secret);
+        return NextResponse.next();
+      } catch (e) {
+        return NextResponse.redirect("/");
+      }
+    } else {
       return NextResponse.redirect("/");
     }
   }
