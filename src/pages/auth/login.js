@@ -54,7 +54,7 @@ const Login = () => {
         if (res.status === 200) {
           localStorage.setItem("token", res.data.token);
           const rolUser = parseJwt(res.data.token).rol;
-          setCookie("token", res.data.token, { path: "/", secure: true, httpOnly: true });
+          setCookie("token", res.data.token, { path: "/" });
           if (rolUser === "ADMIN") {
             router.push("/inicio");
           } else {
