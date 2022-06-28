@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
 import { verify } from "jsonwebtoken";
 import { parseJwt } from "src/utils/userAction";
-import { useLocation } from "react-router-dom";
+import urlApi from "url";
 
 const secret = process.env.SECRET;
 
 export default function middleware(req) {
-  const usePathname = () => {
-    const location = useLocation();
-    return location.pathname;
-  };
-  const url = usePathname();
+  const url = urlApi.parse(req.url);
   const { cookies } = req;
 
   const jwt = cookies.token;
@@ -27,9 +23,9 @@ export default function middleware(req) {
     "/usuario",
   ];
 
-  console.log("URL: ", url);
-  console.log("API ROUTES: ", apiRoutes.includes(url));
-  if (login.includes(url)) {
+  console.log("URL: ", url.pathname);
+  console.log("API ROUTES: ", apiRoutes.includes(url.pathname));
+  if (login.includes(url.pathname)) {
     if (jwt) {
       const rolUser = parseJwt(jwt).rol;
       if (rolUser === "ADMIN") {
@@ -40,7 +36,7 @@ export default function middleware(req) {
     } else {
       return NextResponse.next();
     }
-  } else if (apiRoutes.includes(url)) {
+  } else if (apiRoutes.includes(url.pathname)) {
     if (jwt) {
       try {
         verify(jwt, secret);
