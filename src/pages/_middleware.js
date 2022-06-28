@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { verify } from "jsonwebtoken";
 import { parseJwt } from "src/utils/userAction";
+import { useLocation } from "react-router-dom";
 
 const secret = process.env.SECRET;
 
 export default function middleware(req) {
-  const url = req.url;
+  const usePathname = () => {
+    const location = useLocation();
+    return location.pathname;
+  };
+  const url = usePathname();
   const { cookies } = req;
 
   const jwt = cookies.token;
