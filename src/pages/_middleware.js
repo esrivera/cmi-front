@@ -22,8 +22,8 @@ export default function middleware(req) {
     "/usuario",
   ];
 
-  console.log(url);
-  console.log(apiRoutes.includes(url));
+  console.log("URL: ", url);
+  console.log("API ROUTES: ", apiRoutes.includes(url));
   if (login.includes(url)) {
     if (jwt) {
       const rolUser = parseJwt(jwt).rol;
