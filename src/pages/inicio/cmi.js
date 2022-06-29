@@ -74,12 +74,12 @@ const Home = () => {
               justifyContent: "center",
             }}
           >
-            <Image width={650} height={250} src="/img/logo.png" alt="logo" />
+            <Image width={750} height={350} src="/img/logo.png" alt="logo" />
           </div>
         </Container>
         {alerts.length > 0 ? (
           <>
-            <Stack spacing={2} sx={{ width: "40%", mt: 15, ml: 3 }}>
+            <Stack spacing={2} sx={{ width: "40%", mt: 10, ml: 3 }}>
               <Alert severity="info">Tiene alertas institucionales pendientes!</Alert>
             </Stack>
           </>
