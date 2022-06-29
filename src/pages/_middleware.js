@@ -14,10 +14,10 @@ export default function middleware(req) {
   const login = ["/", "/auth/login"];
 
   const apiRoutes = [
+    "/alerta",
     "/inicio",
     "/cmi",
     "/accion",
-    "/alerta",
     "/estadistica",
     "/objetivo",
     "/usuario",
