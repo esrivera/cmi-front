@@ -112,11 +112,12 @@ const Dashboard = () => {
       >
         <Container maxWidth={false}>
           <Grid container spacing={3}></Grid>
-          <h2>Bienvenido</h2>
+          <h2>Bienvenido al Sistema CMI</h2>
           <div
             style={{
               display: "flex",
               justifyContent: "center",
+              marginTop: 10,
             }}
           >
             <Image width={750} height={350} src="/img/logo.png" alt="logo" />

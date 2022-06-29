@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
-import { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { parseJwt } from "src/utils/userAction";
 import urlApi from "url";
 
-const secret = process.env.SECRET;
+const secret = "secret";
 
 export default function middleware(req) {
   const url = urlApi.parse(req.url);
   const { cookies } = req;
 
-  const jwt = cookies.token;
+  const jwtoken = cookies.token;
 
   const login = ["/", "/auth/login"];
 
@@ -28,9 +28,9 @@ export default function middleware(req) {
 
   if (login.includes(url.pathname)) {
     console.log("RAIZ");
-    if (jwt) {
+    if (jwtoken) {
       console.log("JWT");
-      const rolUser = parseJwt(jwt).rol;
+      const rolUser = parseJwt(jwtoken).rol;
       if (rolUser === "ADMIN") {
         console.log("ADMIN");
         return NextResponse.redirect("/inicio");
@@ -44,16 +44,22 @@ export default function middleware(req) {
     }
   } else if (apiRoutes.includes(url.pathname)) {
     console.log("URL MAIN");
-    if (jwt) {
-      return NextResponse.next();
+    if (jwtoken) {
       // try {
-      //   console.log("VERIFY");
-      //   verify(jwt, secret);
-      //   return NextResponse.next();
-      // } catch (e) {
-      //   console.log("NO VERIfY");
-      //   return NextResponse.redirect("/");
+      //   var decoded = jwt.verify(jwtoken, "secret");
+      //   console.log("DEC: ", decoded);
+      // } catch (err) {
+      //   console.log("ERROR: ", err);
       // }
+      // return NextResponse.next();
+      try {
+        console.log("VERIFY");
+        var decoded = jwt.verify(jwtoken, "secret");
+        return NextResponse.next();
+      } catch (e) {
+        console.log("NO VERIfY");
+        return NextResponse.redirect("/");
+      }
     } else {
       console.log("NO JWT");
       return NextResponse.redirect("/");

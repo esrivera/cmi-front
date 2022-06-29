@@ -123,7 +123,7 @@ const Login = () => {
           >
             <ThemeProvider theme={theme}>
               <Typography variant="h3" align="center">
-                Estrategia Nacional de Lucha contra los Delitos Hidrocarburíferos
+                Estrategia Nacional de Lucha Contra los Delitos Hidrocarburíferos
               </Typography>
             </ThemeProvider>
           </div>

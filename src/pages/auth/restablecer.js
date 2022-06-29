@@ -57,7 +57,7 @@ const Register = () => {
               error={Boolean(formik.touched.email && formik.errors.email)}
               fullWidth
               helperText={formik.touched.email && formik.errors.email}
-              label="Email Address"
+              label="Ingrese el Correo Electrónico"
               margin="normal"
               name="email"
               onBlur={formik.handleBlur}

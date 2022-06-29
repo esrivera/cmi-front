@@ -35,7 +35,14 @@ const Home = () => {
     }
     clientPublic
       .get(
-        query.uri + id + "?page=" + query.page + "&size=" + query.elementos + "&sort.sorted=" + query.sort
+        query.uri +
+          id +
+          "?page=" +
+          query.page +
+          "&size=" +
+          query.elementos +
+          "&sort.sorted=" +
+          query.sort
       )
       .then((result) => {
         if (result.status === 200) {
@@ -67,11 +74,12 @@ const Home = () => {
       >
         <Container maxWidth={false}>
           <Grid container spacing={3}></Grid>
-          <h2>Bienvenido</h2>
+          <h2>Bienvenido al Sistema CMI</h2>
           <div
             style={{
               display: "flex",
               justifyContent: "center",
+              marginTop: 10,
             }}
           >
             <Image width={750} height={350} src="/img/logo.png" alt="logo" />
