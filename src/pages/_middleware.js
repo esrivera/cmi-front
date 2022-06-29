@@ -45,14 +45,15 @@ export default function middleware(req) {
   } else if (apiRoutes.includes(url.pathname)) {
     console.log("URL MAIN");
     if (jwt) {
-      try {
-        console.log("VERIFY");
-        verify(jwt, secret);
-        return NextResponse.next();
-      } catch (e) {
-        console.log("NO VERIfY");
-        return NextResponse.redirect("/");
-      }
+      return NextResponse.next();
+      // try {
+      //   console.log("VERIFY");
+      //   verify(jwt, secret);
+      //   return NextResponse.next();
+      // } catch (e) {
+      //   console.log("NO VERIfY");
+      //   return NextResponse.redirect("/");
+      // }
     } else {
       console.log("NO JWT");
       return NextResponse.redirect("/");
