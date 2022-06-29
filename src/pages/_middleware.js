@@ -26,7 +26,7 @@ export default function middleware(req) {
   console.log("URL: ", url.pathname);
   console.log("API ROUTES: ", apiRoutes.includes(url.pathname));
 
-  if (login.includes(url.pathname)) {
+  if (url.pathname == "/" || url.pathname == "/auth/login") {
     console.log("RAIZ");
     if (jwt) {
       console.log("JWT");
@@ -42,7 +42,15 @@ export default function middleware(req) {
       console.log("NO JWT RAIZ");
       return NextResponse.next();
     }
-  } else if (apiRoutes.includes(url.pathname)) {
+  } else if (
+    url.includes("/inicio") ||
+    url.includes("/cmi") ||
+    url.includes("/alerta") ||
+    url.includes("/objetivo") ||
+    url.includes("/accion") ||
+    url.includes("/usuario") ||
+    url.includes("/estadistica")
+  ) {
     console.log("URL MAIN");
     if (jwt) {
       try {
