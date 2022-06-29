@@ -43,13 +43,13 @@ export default function middleware(req) {
       return NextResponse.next();
     }
   } else if (
-    url.includes("/inicio") ||
-    url.includes("/cmi") ||
-    url.includes("/alerta") ||
-    url.includes("/objetivo") ||
-    url.includes("/accion") ||
-    url.includes("/usuario") ||
-    url.includes("/estadistica")
+    url.pathname.includes("/inicio") ||
+    url.pathname.includes("/cmi") ||
+    url.pathname.includes("/alerta") ||
+    url.pathname.includes("/objetivo") ||
+    url.pathname.includes("/accion") ||
+    url.pathname.includes("/usuario") ||
+    url.pathname.includes("/estadistica")
   ) {
     console.log("URL MAIN");
     if (jwt) {
