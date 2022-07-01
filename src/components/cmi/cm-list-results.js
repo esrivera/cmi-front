@@ -524,14 +524,14 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
                         </IconButton>
                       </TableCell>
                       <TableCell>
-                        <IconButton color="default" onClick={() => handleActive({ ...accion })}>
-                          {accion.estadoCargaActividadMeta ? (
-                            <>
+                        {accion.estadoCargaActividadMeta ? (
+                          <>
+                            <IconButton color="default" onClick={() => handleActive({ ...accion })}>
                               <LoupeRoundedIcon></LoupeRoundedIcon>
                               <p style={{ fontSize: 14 }}>Agregar</p>
-                            </>
-                          ) : null}
-                        </IconButton>
+                            </IconButton>
+                          </>
+                        ) : null}
                         <IconButton color="default" onClick={() => handleList({ ...accion })}>
                           <SummarizeRoundedIcon></SummarizeRoundedIcon>
                           <p style={{ fontSize: 14 }}>Metas por Año</p>

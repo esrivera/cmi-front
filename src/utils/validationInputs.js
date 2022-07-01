@@ -81,3 +81,27 @@ export const validateAlert = {
     return errors;
   },
 };
+
+export const validationCredentials = {
+  submitNewPassword: function submitNewPassword(data) {
+    const errors = {};
+    if (data.newPassword.length < 1 || data.newPassword === "") {
+      errors.newPassword = "Este campo es necesario";
+    } else if (data.newPassword.length < 8 || data.newPassword.length > 16) {
+      errors.newPassword = "La contraseña debe estar entre 8 y 16 carácteres alfanuméricos";
+    }
+    if (data.confirmPassword.length < 1 || data.confirmPassword === "") {
+      errors.confirmPassword = "Este campo es necesario";
+    } else if (data.confirmPassword.length < 8 || data.confirmPassword.length > 16) {
+      errors.confirmPassword = "La contraseña debe estar entre 8 y 16 carácteres alfanuméricos";
+    } else if (data.confirmPassword != data.newPassword) {
+      errors.confirmPassword = "No coinciden las contraseñas";
+    }
+    if (data.code.length < 1 || data.code === "") {
+      errors.code = "Este campo es necesario";
+    } else if (data.code.length != 6) {
+      errors.code = "El código debe ser de 6 caracteres";
+    }
+    return errors;
+  },
+};

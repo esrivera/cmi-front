@@ -41,12 +41,14 @@ theme.typography.h3 = {
 const Login = () => {
   const [user, setUser] = useState({ username: "", password: "", showPassword: false });
   const router = useRouter();
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const [cookies, setCookie] = useCookies(["token"]);
   const handleChange = (event) => {
     setUser({
       ...user,
       [event.target.name]: event.target.value,
     });
+    setIsSubmiting(false);
   };
 
   const handleClickShowPassword = () => {
@@ -62,6 +64,7 @@ const Login = () => {
 
   const handleAutentication = (e) => {
     e.preventDefault();
+    setIsSubmiting(true);
     clientPublic
       .post(apis.auth.post_login, user)
       .then((res) => {
@@ -178,7 +181,14 @@ const Login = () => {
                 </FormControl>
               </Grid>
               <Box sx={{ py: 2 }}>
-                <Button color="primary" fullWidth size="large" type="submit" variant="contained">
+                <Button
+                  color="primary"
+                  disabled={isSubmiting}
+                  fullWidth
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                >
                   Iniciar Sesión
                 </Button>
               </Box>
