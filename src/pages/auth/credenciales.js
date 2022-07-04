@@ -17,6 +17,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { validationCredentials } from "src/utils/validationInputs";
+import { clientPublic } from "src/api/axios";
+import apis from "src/utils/bookApis";
+import { msmSwalError, msmSwalExito } from "src/theme/theme";
 
 const Credential = () => {
   const [isSubmiting, setIsSubmiting] = useState(false);
@@ -65,8 +68,32 @@ const Credential = () => {
     const newErrors = validationCredentials.submitNewPassword(user);
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
-      console.log(user);
-      router.push("/");
+      const formData = { otp: user.code, password: user.newPassword };
+      clientPublic
+        .post(apis.auth.post_reset_password, formData)
+        .then((res) => {
+          if (res.status === 200) {
+            msmSwalExito("Contraseña modificada exitosamente.");
+            router.push("/");
+          }
+        })
+        .catch((exception) => {
+          if (exception.response) {
+            if (exception.response.status == 404) {
+              msmSwalError(
+                "No se pudo modificar la contraseña, el código es incorrecto, por favor verificarlo e intentar nuevamente."
+              );
+            } else if (exception.response.status == 409) {
+              msmSwalError(
+                "El código ingresado es demasiado antiguo, porfavor volver a relizar el proceso."
+              );
+            } else if (exception.response.status >= 400 || exception.response.status < 500) {
+              msmSwalError("No se puede realizar el proceso. Inténtelo más tarde");
+            }
+          } else {
+            msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
+          }
+        });
     }
   };
 

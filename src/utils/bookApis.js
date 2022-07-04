@@ -1,6 +1,8 @@
 export default {
   auth: {
     post_login: "/auth/login",
+    post_forgot_password: "/auth/forgot-password",
+    post_reset_password: "/auth/reset-passwordOtp",
   },
   institution: {
     post_add: "/institution",

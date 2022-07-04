@@ -105,3 +105,13 @@ export const validationCredentials = {
     return errors;
   },
 };
+
+export const validateEmmail = {
+  submitForgotPassword: function submitForgotPassword(data) {
+    const errors = {};
+    if (data.length < 1 || data === "") {
+      errors.email = "Este campo es necesario";
+    }
+    return errors;
+  },
+};

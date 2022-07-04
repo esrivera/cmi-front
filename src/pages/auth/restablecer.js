@@ -1,27 +1,56 @@
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { clientPublic } from "src/api/axios";
+import apis from "src/utils/bookApis";
+import { msmSwalError, msmSwalExito } from "src/theme/theme";
+import { useState } from "react";
+import { validateEmmail } from "src/utils/validationInputs";
 
 const Register = () => {
   const router = useRouter();
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-    },
-    validationSchema: Yup.object({
-      email: Yup.string()
-        .email("Ingresar un correo valido")
-        .max(255)
-        .required("Ingresar el correo"),
-    }),
-    onSubmit: () => {
-      router.push("/");
-    },
-  });
+  const [email, setEmail] = useState("");
+  const [isSubmiting, setIsSubmiting] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (event) => {
+    setEmail(event.target.value);
+    setIsSubmiting(false);
+  };
+
+  const handleSubmit = () => {
+    setIsSubmiting(true);
+    const newErrors = validateEmmail.submitForgotPassword(email);
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      clientPublic
+        .post(apis.auth.post_forgot_password, { email })
+        .then((res) => {
+          if (res.status === 200) {
+            msmSwalExito(
+              "Solicitud generada correctamente, se le ha enviado un correo para completar el proceso"
+            );
+          }
+        })
+        .catch((exception) => {
+          if (exception.response) {
+            if (exception.response.status == 404) {
+              msmSwalError(
+                "No se encuentra el usuario con el correo ingresado, por favor verificarlo e intentar nuevamente."
+              );
+            } else if (exception.response.status >= 400 || exception.response.status < 500) {
+              msmSwalError(
+                "No se puede generar el proceso. " + exception.response.data.messageDebug
+              );
+            }
+          } else {
+            msmSwalError("Ocurrió un error interno. Contáctese con el administrador del Sistema.");
+          }
+        });
+    }
+  };
 
   return (
     <>
@@ -43,42 +72,39 @@ const Register = () => {
               Iniciar Sesión
             </Button>
           </NextLink>
-          <form onSubmit={formik.handleSubmit}>
-            <Box sx={{ my: 3 }}>
-              <Typography color="textPrimary" variant="h4">
-                ¿Olvidaste tu clave?
-              </Typography>
-              <Typography color="textSecondary" gutterBottom variant="body2">
-                Ingresa el correo electrónico con el que se registró tu cuenta para recibir el
-                mensaje de restauración de clave.
-              </Typography>
-            </Box>
-            <TextField
-              error={Boolean(formik.touched.email && formik.errors.email)}
+          <Box sx={{ my: 3 }}>
+            <Typography color="textPrimary" variant="h4">
+              ¿Olvidaste tu clave?
+            </Typography>
+            <Typography color="textSecondary" gutterBottom variant="body2">
+              Ingresa el correo electrónico con el que se registró tu cuenta para recibir el mensaje
+              de restauración de clave.
+            </Typography>
+          </Box>
+          <TextField
+            fullWidth
+            label="Ingrese el Correo Electrónico"
+            margin="normal"
+            name="email"
+            onChange={handleChange}
+            type="email"
+            value={email}
+            variant="outlined"
+          />
+          {errors.email ? <p style={{ color: "red", fontSize: 11 }}>{errors.email}</p> : null}
+          <Box sx={{ py: 2 }}>
+            <Button
+              color="primary"
               fullWidth
-              helperText={formik.touched.email && formik.errors.email}
-              label="Ingrese el Correo Electrónico"
-              margin="normal"
-              name="email"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              type="email"
-              value={formik.values.email}
-              variant="outlined"
-            />
-            <Box sx={{ py: 2 }}>
-              <Button
-                color="primary"
-                disabled={formik.isSubmitting}
-                fullWidth
-                size="large"
-                type="submit"
-                variant="contained"
-              >
-                Enviar
-              </Button>
-            </Box>
-          </form>
+              size="large"
+              disabled={isSubmiting}
+              onClick={handleSubmit}
+              type="submit"
+              variant="contained"
+            >
+              Enviar
+            </Button>
+          </Box>
         </Container>
       </Box>
     </>
