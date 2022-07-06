@@ -51,7 +51,7 @@ const Reporte = () => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "nombre,asc",
   };
   const queryObjetive = {
@@ -59,7 +59,7 @@ const Reporte = () => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "nombre,asc",
   };
   const query = {
@@ -67,7 +67,7 @@ const Reporte = () => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "identificador,asc",
   };
   const data = {

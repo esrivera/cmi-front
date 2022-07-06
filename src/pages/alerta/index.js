@@ -19,7 +19,7 @@ const Alerta = () => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "fechaAlerta,desc",
   };
   const query2 = {
@@ -27,7 +27,7 @@ const Alerta = () => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "fechaAlerta,desc",
   };
 

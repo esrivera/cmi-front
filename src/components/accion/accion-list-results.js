@@ -72,7 +72,7 @@ const ActionListResults = ({ actions, updateView, wordSearch }) => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "nombre,asc",
   };
   const queryObjetive = {
@@ -80,7 +80,7 @@ const ActionListResults = ({ actions, updateView, wordSearch }) => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "nombre,asc",
   };
   const queryMeta = {
@@ -88,7 +88,7 @@ const ActionListResults = ({ actions, updateView, wordSearch }) => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "anioPlanificado,asc",
   };
 

@@ -18,7 +18,7 @@ const AlertaInstitucional = () => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "fechaAlerta,desc",
   };
 

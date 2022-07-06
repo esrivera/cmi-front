@@ -82,7 +82,7 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "anioPlanificado,asc",
   };
   const query2 = {
@@ -90,7 +90,7 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "fecha,asc",
   };
 

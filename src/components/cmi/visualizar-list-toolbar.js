@@ -27,7 +27,7 @@ const VisualizarListToolbar = ({ idObjetive, setIdObjetive, wordSearch, setWordS
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "nombre,asc",
   };
 

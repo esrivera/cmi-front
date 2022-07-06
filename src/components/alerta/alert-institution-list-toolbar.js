@@ -30,7 +30,7 @@ const AlertInstitutionListToolbar = ({
     metodo: "get",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "nombre,asc",
   };
 
@@ -38,7 +38,6 @@ const AlertInstitutionListToolbar = ({
 
   const handleChange = (event) => {
     setIdInstitucion(event.target.value);
-    console.log(event.target.value);
   };
 
   const handleChangeWord = (event) => {

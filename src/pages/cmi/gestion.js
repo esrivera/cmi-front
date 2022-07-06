@@ -21,7 +21,7 @@ const CMIG = () => {
     estado: "true",
     body: null,
     page: 0,
-    elementos: 15,
+    elementos: 50,
     sort: "identificador,asc",
   };
 
