@@ -121,7 +121,7 @@ const AlertInstitutionListResults = ({ alerts, wordSearch }) => {
                   <TableCell>Descripción</TableCell>
                   <TableCell>Tipo</TableCell>
                   <TableCell>Estado</TableCell>
-                  <TableCell>Instituciones</TableCell>
+                  <TableCell>Instituciones Receptoras</TableCell>
                   <TableCell>Evidencia</TableCell>
                 </TableRow>
               </TableHead>

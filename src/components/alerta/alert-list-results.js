@@ -196,7 +196,7 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
                     <TableCell>Descripción</TableCell>
                     <TableCell>Tipo</TableCell>
                     <TableCell>Estado</TableCell>
-                    <TableCell>Instituciones</TableCell>
+                    <TableCell>Instituciones Receptoras</TableCell>
                     <TableCell>Evidencia</TableCell>
                     <TableCell>Eliminar</TableCell>
                   </TableRow>
@@ -273,10 +273,11 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
                 <TableHead>
                   <TableRow>
                     <TableCell>Fecha</TableCell>
+                    <TableCell>Institución Emisora</TableCell>
                     <TableCell>Descripción</TableCell>
                     <TableCell>Tipo</TableCell>
                     <TableCell>Estado</TableCell>
-                    <TableCell>Instituciones</TableCell>
+                    <TableCell>Instituciones Receptoras</TableCell>
                     <TableCell>Evidencia</TableCell>
                     <TableCell>Opción</TableCell>
                   </TableRow>
@@ -300,6 +301,7 @@ const AlertListResults = ({ alerts, updateView, tipoAlerta, wordSearch }) => {
                           </Typography>
                         </Box>
                       </TableCell>
+                      <TableCell>{alert.nombreInstitucionEmisor}</TableCell>
                       <TableCell>{alert.descripcion}</TableCell>
                       <TableCell>
                         {alert.tipoAlerta === "SOC" ? "Socioeconómica" : "Delito Hidrocarburífero"}
