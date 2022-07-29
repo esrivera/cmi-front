@@ -22,6 +22,9 @@ export const validationActivity = {
       errors.porcentajeAvance = "El porcentaje es necesario";
     } else if (data.porcentajeAvance < 0) {
       errors.porcentajeAvance = "El porcentaje debe ser un valor positivo";
+    } else if (data.porcentajeAvance > data.porcentajePlanificado) {
+      errors.porcentajeAvance =
+        "El porcentaje de avance no puede ser superior al porcentaje planificado";
     }
     if (data.descripcionActMeta.length < 1 || data.descripcionActMeta === "") {
       errors.descripcionActMeta = "La descripción es necesaria";

@@ -131,6 +131,7 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
     var data = {
       porcentajeAvance: porcentajeAvance,
       descripcionActMeta: descripcionActMeta,
+      porcentajePlanificado: valorAccion,
       file: file,
     };
     const ISSERVER = typeof window === "undefined";
