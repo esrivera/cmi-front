@@ -573,7 +573,7 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
       {/* Agregar Actividades Meta */}
       <Dialog
         fullWidth
-        maxWidth="sm"
+        maxWidth="md"
         open={openActive}
         onClose={handleCloseActive}
         disableEscapeKeyDown
@@ -608,7 +608,7 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
                 name="valorAccion"
                 margin="normal"
                 id="outlined-basic"
-                label="Porcentaje o Nro Acciones Esperado"
+                label="Porcentaje o Nro Acciones Planificado"
                 type="number"
                 disabled
                 autoComplete="off"
@@ -622,7 +622,7 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
                 name="porcentajeAvance "
                 margin="normal"
                 id="outlined-basic"
-                label="Porcentaje o Nro Acciones Realizado"
+                label="Porcentaje o Nro Acciones Realizadas"
                 type="number"
                 autoComplete="off"
                 onChange={handleChange}
