@@ -145,6 +145,7 @@ const Login = () => {
                   id="outlined-disabled"
                   label="Usuario"
                   required
+                  autoComplete="off"
                   name="username"
                   placeholder="Nombre de usuario"
                   onChange={handleChange}
