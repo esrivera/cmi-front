@@ -104,6 +104,7 @@ const InstitutionListToolbar = ({ updateView, wordSearch, setWordSearch }) => {
                   value={wordSearch}
                   onChange={handleChangeWord}
                   autoFocus
+                  autoComplete="off"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">

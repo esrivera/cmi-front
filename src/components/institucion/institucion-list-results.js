@@ -116,7 +116,7 @@ const InstitutionListResults = ({ institutions, updateView, wordSearch }) => {
         setDataSearch(listData);
       }
     }
-  }, [wordSearch, dataSearch]);
+  }, [wordSearch]);
 
   let rows = [];
   if (wordSearch === "" || wordSearch.length < 3) {

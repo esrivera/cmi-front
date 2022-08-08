@@ -64,6 +64,7 @@ const Objetivo = () => {
                     objetives={objetive}
                     updateView={reload}
                     wordSearch={wordSearch}
+                    setWordSearch={setWordSearch}
                   />
                 </Box>
               </Container>

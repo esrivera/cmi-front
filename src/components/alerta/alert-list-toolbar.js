@@ -247,6 +247,7 @@ const AlertListToolbar = ({ updateView, tipoAlerta, setTipoAlerta, wordSearch, s
                       placeholder="Buscar Alerta"
                       variant="outlined"
                       autoFocus
+                      autoComplete="off"
                     />
                   </Box>
                 </Grid>

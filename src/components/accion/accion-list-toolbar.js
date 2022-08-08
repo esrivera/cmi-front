@@ -230,6 +230,7 @@ const ActionListToolbar = ({
                       value={wordSearch}
                       onChange={handleChangeWord}
                       autoFocus
+                      autoComplete="off"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">

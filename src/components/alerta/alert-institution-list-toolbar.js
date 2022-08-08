@@ -102,6 +102,7 @@ const AlertInstitutionListToolbar = ({
                       placeholder="Buscar Alerta"
                       variant="outlined"
                       autoFocus
+                      autoComplete="off"
                     />
                   </Box>
                 </Grid>

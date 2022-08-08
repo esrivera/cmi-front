@@ -26,7 +26,7 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { clientPublic } from "src/api/axios";
 import { msmSwalError, msmSwalExito, palette } from "src/theme/theme";
 
-const ObjetiveListResults = ({ objetives, updateView, wordSearch }) => {
+const ObjetiveListResults = ({ objetives, updateView, wordSearch, setWordSearch }) => {
   const [selectedObjetiveIds, setSelectedObjetiveIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [idObjetivo, setIdObjetivo] = useState("");
@@ -118,7 +118,7 @@ const ObjetiveListResults = ({ objetives, updateView, wordSearch }) => {
         setDataSearch(listData);
       }
     }
-  }, [wordSearch, dataSearch]);
+  }, [wordSearch]);
 
   let rows = [];
   if (wordSearch === "" || wordSearch.length < 3) {

@@ -99,6 +99,7 @@ const VisualizarListToolbar = ({ idObjetive, setIdObjetive, wordSearch, setWordS
                       value={wordSearch}
                       onChange={handleChangeWord}
                       autoFocus
+                      autoComplete="off"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">

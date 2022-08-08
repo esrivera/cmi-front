@@ -99,6 +99,7 @@ const CmiListToolbarUser = ({ idObjetive, setIdObjetive, wordSearch, setWordSear
                       value={wordSearch}
                       onChange={handleChangeWord}
                       autoFocus
+                      autoComplete="off"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
