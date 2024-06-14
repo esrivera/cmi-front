@@ -1,6 +1,6 @@
 import axios from "axios";
 //const API_URL = "http://localhost:9012";
-const API_URL = "http://cmibak.midena.gob.ec";
+const API_URL = "https://cmibak.midena.gob.ec";
 
 // export const clientPublic = axios.create({
 //   baseURL: `${API_URL}`,
