@@ -105,6 +105,10 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
     setIdIndicador(data.indicador[0].id);
   };
 
+  const handleChangeAnioMeta = (event) => {
+    setAnioAccion(event.target.value);
+  };
+
   const handleAddObservacion = () => {
     clientPublic
       .patch(apis.indicador.patch_observacion + idIndicador, null, {
@@ -593,7 +597,7 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
                 required
                 name="anioAccion"
                 margin="normal"
-                disabled
+                onChange={handleChangeAnioMeta}
                 id="outlined-basic"
                 label="Año"
                 type="number"
