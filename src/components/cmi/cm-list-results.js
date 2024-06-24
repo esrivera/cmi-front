@@ -146,6 +146,10 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
     }
     const newErrors = validationActivity.submitActivity(data);
     setErrors(newErrors);
+    const accionesFiltradas = metas.find(
+      (accion) => accion.anioPlanificado === anioAccion
+    );
+    setMetaId(accionesFiltradas.id);
     if (Object.keys(newErrors).length === 0) {
       const formData = new FormData();
       formData.append("file", file);
@@ -155,7 +159,7 @@ const CmiListResultsUser = ({ actions, updateView, wordSearch }) => {
             anio: anioAccion,
             descripcionActMeta: descripcionActMeta,
             idIndicador: indicadorId,
-            idMeta: metaId,
+            idMeta: accionesFiltradas.id,
             porcentajeAvance: porcentajeAvance,
             ciUsuario: ci,
           },
